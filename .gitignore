@@ -1,0 +1,5 @@
+**/__pycache__/
+**/.vscode/
+GeneralDB.db
+**/.mypy_cache/
+VenvAddAnkiCards
