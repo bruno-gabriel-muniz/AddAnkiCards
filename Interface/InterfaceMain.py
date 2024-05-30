@@ -2,14 +2,23 @@ import customtkinter as ctk
 
 
 class mainAddCards():
+    """
+    Classe que representara e chamara todas as janelas
+    """
+
     def __init__(self) -> None:
+        """
+        Ela, inicialmente, cria uma mini janela
+        com butões que levam a criacao das outras
+        """
         self.winStart = ctk.CTk()
         self.winStart.title("Start Menu")
         self.winStart.geometry("360x120")
         self.winStart.resizable(0, 0)
 
-        NamePrograman = ctk.CTkLabel(self.winStart, text="Add Cards Anki\n" +
-                                                         "From: 'Estudando e programando'"
+        NamePrograman = ctk.CTkLabel(self.winStart, text="Add Anki Cards\n" +
+                                                         "From: 'Estudando" +
+                                                         " e programando'"
                                      ).grid(row=0,
                                             column=0,
                                             columns=2)
@@ -31,23 +40,18 @@ class mainAddCards():
         self.winStart.mainloop()
 
     def makeWinMath(self):
+        """
+        Funcao que cria a janela de matematica
+        """
         winMat = ctk.CTk()
         winMat.title("Make Cards Math")
 
     def makeWinEnglish(self):
+        """
+        Funcao que cria a janela de ingles
+        """
         winEnglish = ctk.CTk()
         winEnglish.title("Make Cards English")
-        btnMakeCards = ctk.CTkButton(winEnglish, 120, 28, text="Novos Cartões",
-                                     command=self.winNewCards).grid(row=0,
-                                                                    column=2,
-                                                                    padx=30)
-
-    def winNewCards(self):
-        winEnglishNewCards = ctk.CTk()
-
-    def makeAddCards(self):
-        winAddCards = ctk.CTk()
-        winAddCards.title("Add Cards Anki")
 
 
 Teste = mainAddCards()

@@ -1,8 +1,10 @@
-import pyautogui as auto
-from time import sleep
-import xerox
 import sqlite3 as sql
 import os.path as path
+import os
+import requests
+import json
+from time import sleep
+import gtts
 
 
 class AddAnkiCards():
@@ -44,55 +46,64 @@ class AddAnkiCards():
         cursor.close()
         conexaoDb.close()
 
-    def addClose(self):
+    def addCloze(self):
         """
-        Método que adicionas os cartões de inglês no cloze modo cloze
-        com o áudio e a tradação separados em cloze diferentes
+        Método que adiciona os cloze cartões no modo cloze
         """
-        # dando tempo para o usuário clicar no campo do cartão do Anki
-        sleep(5)
-        # passamos pelo for loop que vai adicionar os cartões
-        for frase_e_tradução in range(len(self.Tradução_frase)):
-            # escrevemos a frase nele e já colocamos a frase dentro do cloze
-            xerox.copy(f"Id: {self.Tradução_frase[frase_e_tradução][0]}\n" +
-                       f"{{{{c1::{self.Tradução_frase[frase_e_tradução][1]}}}}}" +
-                       " -> {{c1::")
+        # Para adicionar os cartões, passamos por cada um,
+        # criamos e salvamos o audio, editamos o corpo do cartao
+        # atraves de um pouco de HTML e jogamos isso na api que vai
+        # adicionar o cartão de forma automatica
+        for fraseETraducao in range(len(self.Tradução_frase)):
+            audio = gtts.gTTS(self.Tradução_frase[fraseETraducao][1])
 
-            # colamos o a frase no cartão
-            auto.hotkey("ctrl", "v")
-            sleep(1)
-            # entramos no audio tts
-            auto.hotkey("ctrl", "t")
-            sleep(1)
-            # ecrevemos a frase que terá o áudio
-            xerox.copy(self.Tradução_frase[frase_e_tradução][1])
-            auto.hotkey("ctrl", "v")
+            audio.save(path.join("/home", f"{os.environ["USERNAME"]}",
+                                 ".local", "share", "Anki2", "Usuário 1",
+                                 "collection.media", "AddCardsAudio" +
+                                 f"{self.Tradução_frase[fraseETraducao][
+                                     0]:0>6}.mp3"))
+            campoText = (f'id: {self.Tradução_frase[fraseETraducao][0]}<br>' +
+                         "{{" + f"c1::{self.Tradução_frase[fraseETraducao][1]}"
+                         + "}} -> {{c1::[sound:AddCardsAudio" +
+                         f"{self.Tradução_frase[fraseETraducao][0]:0>6}" +
+                         ".mp3]}}<br><ul>{{" +
+                         f"c2::{self.Tradução_frase[fraseETraducao][2]}" +
+                         "}}</ul>")
 
-            # vamos para o opção que cria o áudio
-            for press in range(4):
-                auto.press("tab")
-            # confirmamos o audio
-            auto.press("enter")
-            sleep(3)
-            # saimos e vamos para o final do cartão
-            for press in range(3):
-                auto.press("down")
-            # colocamos a sinalização final do cloze
-            xerox.copy("}}")
-            sleep(2)
-            auto.hotkey("ctrl", "v")
+            requisisao = {'action': "addNote",
+                          'params':
+                              {
+                                  "note":
+                                  {
+                                      "deckName": "conhecimentos::3.inglês New f::3. inglês new f 4",
+                                      "modelName": "cloze",
+                                      "fields":
+                                      {
+                                          "text": campoText,
+                                          "Back Extra": ""
+                                      },
+                                      "options": {
+                                          "allowDuplicate": False,
+                                          "duplicateScope": "deck"
+                                      },
+                                      "tags": [
+                                          "Linguas::inglês::ler_e_falar::1.0"
+                                      ]
+                                  }
+                              },
+                              'version': 6}
+            requisisao = json.dumps(requisisao)
+            resultado = requests.post('http://127.0.0.1:8765', requisisao)
 
-            # pulamos uma linha e damos um tab para facilitar a visualização
-            auto.press("enter")
-            auto.write("    ", 0.1)
-            # ecrevendo a tradução
-            xerox.copy(
-                f"{{{{c2::{self.Tradução_frase[frase_e_tradução][2]}}}}}")
-            auto.hotkey("ctrl", "v")
-
-            # e criando o cartão
-            auto.hotkey("ctrl", "enter")
-            sleep(2)
+            # Finalmente mostramos o codigo do resultado da api, verifcamos
+            # se houve um erro (paramos o programa e relatamos no terminal,
+            # se esse for o caso).
+            print(resultado)
+            resultado = resultado.json()
+            if resultado['error'] != None:
+                print(resultado)
+                return None
+        # E e atualizamos o DB
         self.atualizaDB()
 
     def atualizaDB(self):
@@ -119,3 +130,7 @@ class AddAnkiCards():
         conexaoDb.commit()
         cursor.close()
         conexaoDb.close()
+
+
+Test = AddAnkiCards(3, "cloze")
+Test.addCloze()
