@@ -3,3 +3,7 @@
 GeneralDB.db
 **/.mypy_cache/
 VenvAddAnkiCards
+VenvDeveloper
+**/server.crt
+**/server.key
+**.log
