@@ -276,17 +276,11 @@ def informe(informacoes_do_produto):
     Funcao que informa o usuário o nome dos arquivos dos cartoes
     e quantas perguntas tem em cada cartao
     """
-    # Informando ao usuário os nomes dos cartoes
-    print('\nMostrando Os Nomes dos Cartoes:\n')
-    # passando por todos os nomes presentes no dicionário
-    for mostra_nome in informacoes_do_produto:
-        # mostrando cada um dos nomes
-        print(informacoes_do_produto[mostra_nome]['Nome'])
-    # informando o usuário que os números de perguntas em cada cartao
-    print('\nMostrando O Número de Perguntas\n')
-    # passando por todos os dados das perguntas do dicionário
-    for mostra_perguntas in informacoes_do_produto:
-        # mostrando a quantidade
-        print(informacoes_do_produto[mostra_perguntas]['Número de Perguntas'])
-    # informando o Fim do programa
-    print('\nFim do Programa.')
+    print(f"{'nome':>30}|NumCards")
+    for produto in informacoes_do_produto:
+        print(
+            f"{informacoes_do_produto[produto]['Nome']:>30}"
+            + f"|{informacoes_do_produto[produto]['Número de Perguntas']:>3}"
+        )
+
+    print('Fim do programa')

@@ -7,6 +7,10 @@ import sqlite3 as sql
 import gtts
 import requests
 
+from AddAnkiCards import logginMain
+
+logger = logginMain.get_logger()
+
 
 class AddAnkiCards(object):
     """
@@ -19,6 +23,7 @@ class AddAnkiCards(object):
         num_cards: int,
         tipo_cards: str,
         apiAnkiConnect: str = 'http://127.0.0.1:8765',
+        logger: logging.getLogger = logger,
     ) -> None:
         """
         Funcao que construi a classe já separando os textos e as traducoes
@@ -28,8 +33,8 @@ class AddAnkiCards(object):
         self.apiAnkiConnect = apiAnkiConnect
         self.conexaoDb = Db
         cursor = self.conexaoDb.cursor()
-        self.log = logging.getLogger('__name__')
-        self.log.debug('AddAnkiCards Started')
+        self.logger = logger
+        self.logger.debug('AddAnkiCards Started')
 
         frases_geral_list = cursor.execute(
             'SELECT'
@@ -46,15 +51,15 @@ class AddAnkiCards(object):
         )
 
         if num_cards > quantCardsRestante:
-            # Carregando a mensagem de erro no logger
-            logging.error(
+            # Carregando a mensagem de erro no self.
+            self.logger.error(
                 'Cartoes insuficientes: faltaram ' + f'{quantCardsRestante}'
             )
             self.traducoesFrases = 'Erro_Sem_Frases'
             return None
 
         self.traducoesFrases = frases_geral_list
-        logging.info(
+        self.logger.info(
             'The phrases that will be added are ' + f'{self.traducoesFrases}'
         )
         cursor.close()
@@ -67,7 +72,7 @@ class AddAnkiCards(object):
             f"""id: {self.traducoesFrases[traducaoFrase][0]}<br>
 {{{{c1::{self.traducoesFrases[traducaoFrase][1]}}}}} ->"""
             + f""" {{{{c1::[sound:AddCardsAudio{self.traducoesFrases[
-                traducaoFrase][0]:0>6}]}}}}
+                traducaoFrase][0]:0>6}.mp3]}}}}
     <ul>
     {{{{c2::{self.traducoesFrases[traducaoFrase][2]}}}}}
     </ul>
@@ -101,7 +106,7 @@ class AddAnkiCards(object):
             )
             audio.save(pathAudio)
             campoText = self.formatTextCardCloze(traducaoFrase)
-            logging.info(f'campoText = {campoText}')
+            self.logger.info(f'campoText = {campoText}')
             requisisao = {
                 'action': 'addNote',
                 'params': {
@@ -119,20 +124,20 @@ class AddAnkiCards(object):
                 },
                 'version': 6,
             }
-            logging.info(f'The request is {requisisao}')
+            self.logger.info(f'The request is {requisisao}')
             requisisao = json.dumps(requisisao)
-            resultado = requests.post(self.apiAnkiConnect, requisisao)
+            result = requests.post(self.apiAnkiConnect, requisisao)
 
             # Finalmente mostramos o codigo do resultado da api, verifcamos
             # se houve um erro (paramos o programa e relatamos no terminal,
             # se esse for o caso).
 
-            resultado = resultado.json()
-            resultList.append(resultado)
-            if resultado['error'] is not None:
-                logging.error(f"Error API AnkiConnect: {resultado['error']}")
+            result = result.json()
+            resultList.append(result)
+            if result['error'] is not None:
+                self.logger.error(f"Error API AnkiConnect: {result['error']}")
                 return resultList
-            logging.debug(
+            self.logger.debug(
                 'Phrases with id '
                 + f'= {self.traducoesFrases[traducaoFrase][0]} '
                 + 'have been added in Anki'
@@ -164,7 +169,7 @@ class AddAnkiCards(object):
             )
 
         # salvamos o que foi feito e encerramos a conexao
-        logging.debug('The database has been updated')
+        self.logger.debug('The database has been updated')
         conexaoDb.commit()
         cursor.close()
         conexaoDb.close()

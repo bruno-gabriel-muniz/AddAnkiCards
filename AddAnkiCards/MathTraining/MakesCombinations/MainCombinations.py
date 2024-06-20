@@ -1,9 +1,14 @@
 """Modulo proncipal da criacao dos cards de matematica."""
 # importando a funcao que pede as informacoes para o usuario.
 # importando a parte do programa que encontra as possibilidades
-from FindCombinations import (Find2CombSubDiv, Find2CombSumMul, FindCombSubDiv,
-                              FindCombSumMul)
+from FindCombinations import (
+    Find2CombSomMul,
+    Find2CombSubDiv,
+    FindCombSomMul,
+    FindCombSubDiv,
+)
 from InfoCombinations import Pergunte, informe
+
 # importando a parte do programa que formata, o que foi
 # encontrado, para treinar no Anki
 from SaveCombinations import Armazene, Distribua, Embaralhe
@@ -35,7 +40,7 @@ def main_combinador():
         # caso nao tenha escolhido sabemos que foi soma ou multiplicacao
         else:
             # portanto aplicamos a funcao correta para este caso
-            combinacoes = Find2CombSumMul(intervalo[0], intervalo[1])
+            combinacoes = Find2CombSomMul(intervalo[0], intervalo[1])
     # caso ele só tenha escolhido 1
     else:
         # verificando se o usuário escolheu subtracao ou divisao
@@ -46,7 +51,7 @@ def main_combinador():
         # de adicao e multiplicacao
         else:
             # criando todas as combinacoes possíveis
-            combinacoes = FindCombSumMul(intervalo)
+            combinacoes = FindCombSomMul(intervalo)
     # embaralhando elas
     combinacoes_embaralhada = Embaralhe(combinacoes)
     # distriubuindo nas listas

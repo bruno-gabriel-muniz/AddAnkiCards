@@ -1,33 +1,14 @@
 import json
 import logging
-import os
-import os.path as path
-import sys
 from unittest.mock import MagicMock
 
+import pytest
 import requests
 
+from AddAnkiCards.logginMain import get_logger
+from AddAnkiCards.PraticingEnglish.EnglishAddAnkiCards import MainAddAnkiCards
 
-def resolveBugDeImportacao():
-    """
-    Essa funcao importa os modulos do projeto, corrigindo um bug que retira
-    o diretório atual dos que sao procurados para a importacao
-    """
-    (sys.path.append(os.getcwd()))
-    from AddAnkiCards.PraticingEnglish.EnglishAddAnkiCards import \
-        MainAddAnkiCards
-
-    return MainAddAnkiCards
-
-
-MainAddAnkiCards = resolveBugDeImportacao()
-
-logging.basicConfig(
-    filename=path.join('.', 'tests', 'LoggerTests.log'),
-    filemode='w',
-    format='%(filename)s::%(name)s::%(levelname)s::%(message)s',
-    level=logging.DEBUG,
-)
+logger = get_logger()
 
 
 exemplos = {
@@ -85,10 +66,13 @@ def deletaCardsTestById(idCardsTeste):
     requests.post('http://127.0.0.1:8765', requisisao)
 
 
-def test_simple_AddCloze_Integrate_Anki_Connect():
+@pytest.mark.NotQuick
+@pytest.mark.Anki
+def test_simple_AddCloze_Integrate_Anki_Connect(caplog):
     """
     Funcao que testa a conexao com o programa e a api do Anki-Connect
     """
+    caplog.set_level(logging.DEBUG)
     test = MainAddAnkiCards.AddAnkiCards(mockGeneralDB(), 3, 'cloze')
     resultTest = test.addCloze()
     resultTestError = [
@@ -105,12 +89,15 @@ def test_simple_AddCloze_Integrate_Anki_Connect():
     deletaCardsTestById(resultTestId)
 
 
-def test_format_Cards_AddCloze():
+def test_format_Cards_AddCloze(caplog):
     """
     Funcao que testa a formatacao dos cartoes
     """
     # imporatando os exemplos
     global exemplos, logger
+    #
+    # Capitura os logs
+    caplog.set_level(logging.DEBUG)
     #
     # rodando o teste
     test = MainAddAnkiCards.AddAnkiCards(mockGeneralDB(), 3, 'cloze')
@@ -122,28 +109,24 @@ def test_format_Cards_AddCloze():
     formatEspec = [
         f"""id: {exemplos['exemplo1'][0]}<br>
 {{{{c1::{exemplos['exemplo1'][1]}}}}} -> {{{{c1::[sound:AddCardsAudio{exemplos[
-            'exemplo1'][0]:0>6}]}}}}
+            'exemplo1'][0]:0>6}.mp3]}}}}
     <ul>
     {{{{c2::{exemplos['exemplo1'][2]}}}}}
     </ul>
 """,
         f"""id: {exemplos['exemplo2'][0]}<br>
 {{{{c1::{exemplos['exemplo2'][1]}}}}} -> {{{{c1::[sound:AddCardsAudio{exemplos[
-            'exemplo2'][0]:0>6}]}}}}
+            'exemplo2'][0]:0>6}.mp3]}}}}
     <ul>
     {{{{c2::{exemplos['exemplo2'][2]}}}}}
     </ul>
 """,
         f"""id: {exemplos['exemplo3'][0]}<br>
 {{{{c1::{exemplos['exemplo3'][1]}}}}} -> {{{{c1::[sound:AddCardsAudio{exemplos[
-            'exemplo3'][0]:0>6}]}}}}
+            'exemplo3'][0]:0>6}.mp3]}}}}
     <ul>
     {{{{c2::{exemplos['exemplo3'][2]}}}}}
     </ul>
 """,
     ]
     assert results == formatEspec
-    #
-    # limpando o json para os proximos testes
-    limpaJson = open('tests.json', 'w')
-    limpaJson.close()

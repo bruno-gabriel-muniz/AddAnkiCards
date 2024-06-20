@@ -6,5 +6,11 @@ format:
 lint:
 	@blue ./AddAnkiCards/ --check
 	@blue ./tests/ --check
-test:
-	@pytest -v
+testQuick:
+	@pytest -v -s -m "not NotQuick"
+
+testLessAnki:
+	@pytest -v -s -m "not Anki"
+
+testAll:
+	@pytest -v -s

@@ -1,0 +1,2 @@
+"Este arquivo tera as dependencias minimas
+para usar o programa quando o beta sair"
