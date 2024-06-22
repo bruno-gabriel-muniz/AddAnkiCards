@@ -4,7 +4,7 @@ def FindCombSomMul(intervalo: list) -> list:
     em determinado intervalo para operacoes de multiplicacpao e divisao.
     Como usar:
     ─ Argumentos: uma lista com no primerio índice o número mínimo
-      do intervalo e no eltimo o máximo.
+      do intervalo e no segundo, e ultimo, o máximo.
     """
     rangeIsValid(intervalo)
     # criando a lista que vai conter as possibilidades
@@ -32,7 +32,7 @@ def FindCombSubDiv(intervalo: list) -> list:
     em determinado intervalo para as operacoes de subtracao e divisao.
     Como usar:
     ─ Argumentos: uma lista com no primerio índice o número mínimo
-      do intervalo e no eltimo o máximo.
+      do intervalo e no segundo, e ultimo, o máximo.
     """
     rangeIsValid(intervalo)
     # criando a lista que vai conter as possibilidades

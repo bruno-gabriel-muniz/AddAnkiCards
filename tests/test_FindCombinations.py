@@ -357,16 +357,14 @@ def test_2FindCombinationsRengeEmpyt():
 def test_2FindCombinationsRangeIntersect():
     with pytest.raises(ValueError) as testError:
         FindCombinations.Find2CombSomMul([1, 10], [5, 20])
-    assert testError.value.args[0] == ('Os intervalos, (' +
-                                       f'{[1, 10]}-{[5, 20]}' +
-                                       '), se interssectam.'
-                                       )
+    assert testError.value.args[0] == (
+        'Os intervalos, (' + f'{[1, 10]}-{[5, 20]}' + '), se interssectam.'
+    )
     with pytest.raises(ValueError) as testError:
         FindCombinations.Find2CombSubDiv([10, 99], [50, 200])
-    assert testError.value.args[0] == ('Os intervalos, (' +
-                                       f'{[10, 99]}-{[50, 200]}' +
-                                       '), se interssectam.'
-                                       )
+    assert testError.value.args[0] == (
+        'Os intervalos, (' + f'{[10, 99]}-{[50, 200]}' + '), se interssectam.'
+    )
 
 
 def test_2FindCombinationsRangeInvalid():

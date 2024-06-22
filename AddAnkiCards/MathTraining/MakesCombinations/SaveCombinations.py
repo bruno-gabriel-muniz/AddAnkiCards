@@ -1,6 +1,8 @@
 import sqlite3 as sql
 from random import shuffle
 
+from AddAnkiCards.Db import DbConnect
+
 
 def Embaralhe(combinacoes):
     """
@@ -13,66 +15,78 @@ def Embaralhe(combinacoes):
     return combinacoes
 
 
-def Distribua(combinacoes, quant_cards_por_d, num_max_cards):
+def Distribua(
+    combinacoes: list, quant_cards_por_d: int, num_max_cards: int
+) -> list:
     """
     Funcao que distribui em listas ─ uma para cada cartao adicionado por dia ─
     as possibilidades encontradas.
     """
     # variavel que divide os valores da lista igualmente entre a
     # quantidade de cartoes por dia
-    divisória = len(combinacoes) / quant_cards_por_d
+    divisoria = len(combinacoes) / quant_cards_por_d
     # criando a lista que vai conter as listas separadas
     lista_separada = []
     # verificando se possui um limite máximo para os cartoes
     if num_max_cards == 'n':
         # for loop que cria todas as listas
-        for próximo in range(quant_cards_por_d):
+        for proximo in range(quant_cards_por_d):
             # adicionando a lista separada os cartoes da lista
             lista_separada.append(
                 combinacoes[
-                    round(próximo * divisória) : round(
-                        (próximo + 1) * divisória
+                    round(proximo * divisoria) : round(
+                        (proximo + 1) * divisoria
                     )
                 ]
             )
-    # verificando se o limite de cartoes ultrapaca a divisória
-    elif (num_max_cards // quant_cards_por_d) >= divisória:
+    # verificando se o limite de cartoes ultrapaca a divisoria
+    elif (num_max_cards / quant_cards_por_d) >= divisoria:
         # for loop que cria as listas
-        for próximo in range(quant_cards_por_d):
+        for proximo in range(quant_cards_por_d):
             # adicionando a lista separada os cartoes da lista
             lista_separada.append(
                 combinacoes[
-                    round(próximo * divisória) : round(
-                        (próximo + 1) * divisória
+                    round(proximo * divisoria) : round(
+                        (proximo + 1) * divisoria
                     )
                 ]
             )
-    # caso tenha e nao ultrapase a divisória
+    # caso tenha e nao ultrapase a divisoria
     else:
+        countCards = 0
         # for loop que cria as listas
-        for próximo in range(quant_cards_por_d):
+        for proximo in range(quant_cards_por_d):
             # adicionando a lista separada os cartoes da lista
             # levando em consideracao o limite
             lista_separada.append(
                 combinacoes[
-                    round(próximo * divisória) : round(
-                        próximo * divisória
+                    round(proximo * divisoria) : round(
+                        proximo * divisoria
                         + (num_max_cards / quant_cards_por_d)
                     )
                 ]
             )
+            countCards += len(lista_separada[-1])
+        if countCards > num_max_cards:
+            lista_separada[-1].pop()
     # retornando a lista
     return lista_separada
 
 
-def Armazene(combinacoes, operacoes, sao_dois_intervalos, intervalo):
+def Armazene(
+    combinacoes: list,
+    operacoes: str,
+    sao_dois_intervalos: bool,
+    intervalo: list,
+    conexaoDb: sql.connect = DbConnect.DbConnect('GeneralDb.db'),
+) -> dict:
     """
     Funcao que armazena os valores dos cartoes em um banco de dados
     e realiza as opercaoes que eles foram feitos para treinar
     """
 
     # Criando a conexao com o Banco de Dados
-    ConexaoDB = sql.connect('GeneralDB.db')
+    ConexaoDB = conexaoDb
 
     # Criando os cursores da conexao
     Cursor = ConexaoDB.cursor()
@@ -89,7 +103,7 @@ def Armazene(combinacoes, operacoes, sao_dois_intervalos, intervalo):
         'CREATE TABLE IF NOT EXISTS CardsCalculoMental'
         + ' (IdCard INTEGER NOT NULL,'
         + ' NomeCard TEXT NOT NULL, Card TEXT NOT NULL,'
-        + ' DataPriRev TEXT NOT NULL,'
+        + ' NumCards INTEGER, DataPriRev TEXT NOT NULL,'
         + ' TipoCard INTEGER NOT NULL, FOREIGN KEY (TipoCard)'
         + ' REFERENCES TipoCardsCalculoMental(IdTipo))'
     )
@@ -224,9 +238,9 @@ def Armazene(combinacoes, operacoes, sao_dois_intervalos, intervalo):
         # Adicionando o cartao no Banco de Dados
         Cursor.execute(
             'INSERT INTO CardsCalculoMental'
-            + ' (IdCard, NomeCard, Card, DataPriRev, TipoCard)'
+            + ' (IdCard, NomeCard, Card, NumCards, DataPriRev, TipoCard)'
             + f" VALUES ({cont_id}, '{CardTitle}', "
-            + f"'{CardFinal}', '-', {idTipoCards:.0f})"
+            + f"'{CardFinal}',{cont_cloze}, '-', {idTipoCards:.0f})"
         )
         ConexaoDB.commit()
     # E encerrando a conexao
