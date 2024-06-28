@@ -1,4 +1,4 @@
-def Pergunte():
+def pergunte():
     """
     Funcao que pede informacoes necessárias para o usuário, como:
      - Quantidade de cartoes a serem adicionados por dia;

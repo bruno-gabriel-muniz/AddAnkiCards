@@ -7,11 +7,11 @@ from FindCombinations import (
     FindCombSomMul,
     FindCombSubDiv,
 )
-from InfoCombinations import Pergunte, informe
+from InfoCombinations import informe, pergunte
 
 # importando a parte do programa que formata, o que foi
 # encontrado, para treinar no Anki
-from SaveCombinations import Armazene, Distribua, Embaralhe
+from SaveCombinations import armazene, calcula, distribua, embaralhe, formata
 
 
 def main_combinador():
@@ -29,13 +29,13 @@ def main_combinador():
         intervalo,
         num_max_cards,
         operacao,
-    ) = Pergunte()
-    # verificando se o usuário escolheu dois intervalos ou somente 1
+    ) = pergunte()
+    # verificamos se o usuário escolheu dois intervalos ou somente 1
     if sao_dois_intervalos:
-        # caso tenha escolhido 2 verificando se escolheu
+        # caso tenha escolhido 2, verificamos se escolheu
         # subtracao ou divisao
         if operacao == 'sub' or operacao == 'div':
-            # realizando a funcao deste caso
+            # realizamos a funcao deste caso
             combinacoes = Find2CombSubDiv(intervalo[0], intervalo[1])
         # caso nao tenha escolhido sabemos que foi soma ou multiplicacao
         else:
@@ -43,27 +43,48 @@ def main_combinador():
             combinacoes = Find2CombSomMul(intervalo[0], intervalo[1])
     # caso ele só tenha escolhido 1
     else:
-        # verificando se o usuário escolheu subtracao ou divisao
+        # verificamos se o usuário escolheu subtracao ou divisao
         if operacao == 'sub' or operacao == 'div':
-            # criando todas as combinacoes possíveis
+            # criamos todas as combinacoes possíveis
             combinacoes = FindCombSubDiv(intervalo)
-        # caso nao tenha escolhidoi rodando o programa
+        # caso nao tenha escolhido, rodamos o programa
         # de adicao e multiplicacao
         else:
-            # criando todas as combinacoes possíveis
+            # criamos todas as combinacoes possíveis
             combinacoes = FindCombSomMul(intervalo)
-    # embaralhando elas
-    combinacoes_embaralhada = Embaralhe(combinacoes)
-    # distriubuindo nas listas
-    combinacoes_distribuidas = Distribua(
+    # embaralhamos elas
+    combinacoes_embaralhada = embaralhe(combinacoes)
+    # distriuimos nas listas
+    combinacoes_distribuidas = distribua(
         combinacoes_embaralhada, quant_cards_por_d, num_max_cards
     )
+    # calculamos os valores das combinacoes:
+    operatorAuxi = calcula(combinacoes_distribuidas, operacao)
+    infoProduct = {}
+    listCardFinal = []
+    # verificamos se sao dois intervalos
+    cont_id = 0
+    if sao_dois_intervalos:
+        intervalo[0] = '(%02i-%02i)' % (intervalo[0][0], intervalo[0][1])
+        intervalo[1] = '(%02i-%02i)' % (intervalo[1][0], intervalo[1][1])
+    for combinacoesSeparadas in combinacoes_distribuidas:
+        cont_id += 1
+        listCardFinal.append(
+            formata(
+                combinacoesSeparadas,
+                operatorAuxi,
+                operacao,
+                intervalo,
+                cont_id,
+                infoProduct,
+            )
+        )
     # armazenando elas no arquivo
-    informacoes_do_resultado = Armazene(
-        combinacoes_distribuidas, operacao, sao_dois_intervalos, intervalo
+    armazene(
+        listCardFinal, operacao, sao_dois_intervalos, intervalo, infoProduct
     )
     # informando a condicao final do produto
-    informe(informacoes_do_resultado)
+    informe(infoProduct)
 
 
 main_combinador()

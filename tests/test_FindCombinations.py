@@ -4,7 +4,7 @@ from math import factorial
 import pytest
 
 from AddAnkiCards.logginMain import get_logger
-from AddAnkiCards.MathTraining.MakesCombinations import FindCombinations
+from AddAnkiCards.MathTraining.MakeCardsMath import FindCombinations
 
 logger = get_logger()
 

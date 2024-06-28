@@ -8,33 +8,34 @@ import gtts
 import requests
 
 from AddAnkiCards import logginMain
+from AddAnkiCards.Db import DbConnect
 
 logger = logginMain.get_logger()
 
 
-class AddAnkiCards(object):
+class AddCardsEnglish(object):
     """
     Classe que adiciona os cartoes nao usados no Anki e atualiza o DB
     """
 
     def __init__(
         self,
-        Db: sql.Connection,
         num_cards: int,
-        tipo_cards: str,
+        nameDeck: str = 'PraticingEnglish',
+        nameTag: str = 'PraticingEnglish::Praticing',
+        logger: logging.getLogger = logginMain.get_logger(),
+        Db: sql.Connection = DbConnect.DbConnect(),
         apiAnkiConnect: str = 'http://127.0.0.1:8765',
-        logger: logging.getLogger = logger,
     ) -> None:
         """
         Funcao que construi a classe já separando os textos e as traducoes
         """
 
-        self.Tipo_cards = tipo_cards
         self.apiAnkiConnect = apiAnkiConnect
         self.conexaoDb = Db
         cursor = self.conexaoDb.cursor()
         self.logger = logger
-        self.logger.debug('AddAnkiCards Started')
+        self.logger.debug('AddCardsEnglish Started')
 
         frases_geral_list = cursor.execute(
             'SELECT'
@@ -79,7 +80,7 @@ class AddAnkiCards(object):
 """
         )
 
-    def addCloze(self):
+    def addCards(self):
         """
         Método que adiciona os cloze cartoes no modo cloze
         """
@@ -142,11 +143,11 @@ class AddAnkiCards(object):
                 + f'= {self.traducoesFrases[traducaoFrase][0]} '
                 + 'have been added in Anki'
             )
-        self.atualizaDB()  # E atualizamos o DB
+        self.updateDB()  # E atualizamos o DB
         print(resultList)
         return resultList
 
-    def atualizaDB(self):
+    def updateDB(self):
         """
         Metodo que atualiza o banco de dados do programa
         """
