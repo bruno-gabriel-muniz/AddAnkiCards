@@ -82,7 +82,7 @@ class AddCardsEnglish(object):
 
     def addCards(self):
         """
-        Método que adiciona os cloze cartoes no modo cloze
+        Metodo que adiciona os cloze cartoes no modo cloze.
         """
 
         # Para adicionar os cartoes, passamos por cada um,
