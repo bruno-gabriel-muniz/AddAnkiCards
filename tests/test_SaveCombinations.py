@@ -15,7 +15,7 @@ def test_distribuaSimple():
     # Dao 45 combinacoes diferentes
 
     # E distribuimos as possibilidades para 9 cartoes
-    listTest = SaveCombinations.distribua(
+    listTest, numCards = SaveCombinations.distribua(
         FindCombinations.FindCombSomMul([1, 9]), 9, 'n'
     )
 
@@ -33,7 +33,7 @@ def test_distribuaSimple():
 
     # A mesma coisa
     print('\n', end='')
-    listTest = SaveCombinations.distribua(
+    listTest, numCards = SaveCombinations.distribua(
         FindCombinations.FindCombSubDiv([1, 9]), 9, 'n'
     )
     assert len(listTest) == 9
@@ -52,7 +52,7 @@ def test_distribuaDivisoriaIsFloat():
     """
     # para entender o teste consulte os comentarios do test_DistribuaSimple
     print('\n', end='')
-    listTest = SaveCombinations.distribua(
+    listTest, numCards = SaveCombinations.distribua(
         FindCombinations.FindCombSomMul([1, 9]), 8, 'n'
     )
     assert len(listTest) == 8
@@ -64,7 +64,7 @@ def test_distribuaDivisoriaIsFloat():
     assert countTerms == 45
 
     print('\n', end='')
-    listTest = SaveCombinations.distribua(
+    listTest, numCards = SaveCombinations.distribua(
         FindCombinations.FindCombSubDiv([1, 9]), 8, 'n'
     )
     assert len(listTest) == 8
@@ -78,7 +78,7 @@ def test_distribuaDivisoriaIsFloat():
 
 def test_distribuaWithMaxCards():
     print('\n', end='')
-    listTest = SaveCombinations.distribua(
+    listTest, numCards = SaveCombinations.distribua(
         FindCombinations.FindCombSomMul([1, 9]), 8, 30
     )
     assert len(listTest) == 8
@@ -90,7 +90,7 @@ def test_distribuaWithMaxCards():
     assert countTerms == 30
 
     print('\n', end='')
-    listTest = SaveCombinations.distribua(
+    listTest, numCards = SaveCombinations.distribua(
         FindCombinations.FindCombSubDiv([1, 9]), 8, 30
     )
     assert len(listTest) == 8
@@ -113,13 +113,15 @@ def test_calcula1Intervalo():
     #
     # a que distribui, mesmo sem chamar a que embaralha as combinacoes
     # pois isso nao influencia o teste
-    resultSomTest1 = SaveCombinations.distribua(resultSomTest1, 9, 'n')
+    resultSomTest1, numCards = SaveCombinations.distribua(
+        resultSomTest1, 9, 'n')
     #
     # a mesma coisa para o teste de multiplicacao, devido a um bug no metodo
     # copy (ele esta passando o endereco de memoria da lista ao inves de
     # criar uma nova com os mesmos valores)
     resultMulTest1 = FindCombinations.FindCombSomMul([1, 9])
-    resultMulTest1 = SaveCombinations.distribua(resultMulTest1, 9, 'n')
+    resultMulTest1, numCards = SaveCombinations.distribua(
+        resultMulTest1, 9, 'n')
     #
     # e enfim chamamos a funcao que esta sendo testada
     SaveCombinations.calcula(resultSomTest1, 'som')
@@ -137,9 +139,11 @@ def test_calcula1Intervalo():
     #
     # Agora fazemos a mesma coisa para a subtracao e divisao.
     resultSubTest2 = FindCombinations.FindCombSubDiv([1, 9])
-    resultSubTest2 = SaveCombinations.distribua(resultSubTest2, 9, 'n')
+    resultSubTest2, numCards = SaveCombinations.distribua(
+        resultSubTest2, 9, 'n')
     resultDivTest2 = FindCombinations.FindCombSubDiv([1, 9])
-    resultDivTest2 = SaveCombinations.distribua(resultDivTest2, 9, 'n')
+    resultDivTest2, numCards = SaveCombinations.distribua(
+        resultDivTest2, 9, 'n')
     SaveCombinations.calcula(resultSubTest2, 'sub')
     SaveCombinations.calcula(resultDivTest2, 'div')
     for test in range(5):
@@ -157,10 +161,10 @@ def test_armazeneSimple():
     print()
     #
     # Fazemos as combinacoes para teste
-    combinacoesTest1 = SaveCombinations.distribua(
+    combinacoesTest1, numCards = SaveCombinations.distribua(
         FindCombinations.FindCombSomMul([1, 9]), 5, 'n'
     )
-    combinacoesTest2 = SaveCombinations.distribua(
+    combinacoesTest2, numCards = SaveCombinations.distribua(
         FindCombinations.FindCombSubDiv([1, 9]), 9, 'n'
     )
     # Iniciamos a conexao com o banco de dados de teste
@@ -187,10 +191,10 @@ def test_armazeneSimple():
     #
     # Rodamos a funcao que esta sendo testado
     SaveCombinations.armazene(
-        listCardFinalTest1, 'som', False, [1, 9], infoProduct1,
+        listCardFinalTest1, 'som', False, [1, 9], numCards, infoProduct1,
         DbConnect.DbConnect('DbTest.db'))
     SaveCombinations.armazene(
-        listCardFinalTest2, 'som', False, [1, 9], infoProduct2,
+        listCardFinalTest2, 'som', False, [1, 9], numCards, infoProduct2,
         DbConnect.DbConnect('DbTest.db'))
     #
     # Pesquisamos os valores que estao sendo testados no banco de dados de

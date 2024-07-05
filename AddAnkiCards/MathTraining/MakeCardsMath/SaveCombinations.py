@@ -17,7 +17,7 @@ def embaralhe(combinacoes):
 
 def distribua(
     combinacoes: list, quant_cards_por_d: int, num_max_cards: int
-) -> list:
+) -> tuple[list, int]:
     """
     Funcao que distribui em listas ─ uma para cada cartao adicionado por dia ─
     as possibilidades encontradas.
@@ -27,6 +27,7 @@ def distribua(
     divisoria = len(combinacoes) / quant_cards_por_d
     # criando a lista que vai conter as listas separadas
     lista_separada = []
+    countCards = 0
     # verificando se possui um limite máximo para os cartoes
     if num_max_cards == 'n':
         # for loop que cria todas as listas
@@ -39,6 +40,7 @@ def distribua(
                     )
                 ]
             )
+            countCards += len(lista_separada[-1])
     # verificando se o limite de cartoes ultrapaca a divisoria
     elif (num_max_cards / quant_cards_por_d) >= divisoria:
         # for loop que cria as listas
@@ -51,6 +53,7 @@ def distribua(
                     )
                 ]
             )
+            countCards += len(lista_separada[-1])
     # caso tenha e nao ultrapase a divisoria
     else:
         countCards = 0
@@ -69,8 +72,8 @@ def distribua(
             countCards += len(lista_separada[-1])
         if countCards > num_max_cards:
             lista_separada[-1].pop()
-    # retornando a lista
-    return lista_separada
+    # retornando a lista e a quantidade de cartoes
+    return lista_separada, countCards
 
 
 def calcula(combinacoes: list, operacao: str) -> str:
@@ -182,6 +185,7 @@ def armazene(
     tipoOperacao: str,
     saoDoisIntervalos: bool,
     intervalo: list,
+    countCards: int,
     infoProduct: dict,
     conexaoDb: sql.connect = DbConnect.DbConnect('GeneralDB.db'),
 ) -> dict:
@@ -202,7 +206,8 @@ def armazene(
         'CREATE TABLE IF NOT EXISTS TipoCardsCalculoMental'
         + ' (IdTipo INTEGER PRIMARY KEY AUTOINCREMENT,'
         + ' TipoOperacao TEXT KEY, DoisIntervalos INTEGER,'
-        + ' Intervalo TEXT)'
+        + ' Intervalo TEXT,'
+        + ' NumNotes INTEGER, NumNotesFree INTEGER, NumCardsForNotes NUMBER)'
     )
     Cursor.execute(
         'CREATE TABLE IF NOT EXISTS CardsCalculoMental'
@@ -221,10 +226,13 @@ def armazene(
     # dos cards que serao adicionados
     Cursor.execute(
         'INSERT INTO TipoCardsCalculoMental'
-        + ' (TipoOperacao, DoisIntervalos, Intervalo)'
+        + ' (TipoOperacao, DoisIntervalos, '
+        + 'Intervalo, NumNotes, NumNotesFree, NumCardsForNotes)'
         + f" VALUES ('{tipoOperacao}',"
         + f' {int(saoDoisIntervalos):.0f},'
-        + f" '{intervalo[0]}-{intervalo[1]}')"
+        + f" '{intervalo[0]}-{intervalo[1]}',"
+        + f' {len(listCardFinal)}, {len(listCardFinal)},'
+        + f' {countCards/len(listCardFinal)})'
     )
     ConexaoDB.commit()
     for cardFinal in listCardFinal:

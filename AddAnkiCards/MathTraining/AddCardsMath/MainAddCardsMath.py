@@ -37,6 +37,7 @@ class AddCardsMath(object):
             'SELECT Card, IdCard FROM CardsCalculoMental ' +
             f'WHERE (TipoCard = {IdTipoCard} AND DataPriRev = "-") ' +
             f'ORDER BY IdCard ASC LIMIT {QuantCards}').fetchall()
+        self.QuantCards = QuantCards
         #
         # Verifica se existe cards suficientes para a quantidade pedida
         if len(self.cardsForAdd) != QuantCards:
@@ -85,7 +86,6 @@ class AddCardsMath(object):
         '''
         Metodo que atualiza o DB
         '''
-        print('Update')
         self.logger.debug('Atualizando o Banco de Dados.')  # registrando
         #
         #
@@ -97,6 +97,13 @@ class AddCardsMath(object):
                         f'{self.idTipoCard} AND ' +
                         f'IdCard > {self.cardsForAdd[0][1]-1} AND ' +
                         f'IdCard < {self.cardsForAdd[-1][1]+1})')
+        NumNotesFree = self.db.execute(
+            'SELECT NumNotesFree FROM TipoCardsCalculoMental ' +
+            f'WHERE IdTipo = {self.idTipoCard}'
+        ).fetchall()
+        NewNumNotesFree = NumNotesFree - self.QuantCards
+        self.db.execute('UPDATE TipoCardsCalculoMental ' +
+                        f'SET NumNotesFree={NewNumNotesFree}')
         self.db.commit()
 
 

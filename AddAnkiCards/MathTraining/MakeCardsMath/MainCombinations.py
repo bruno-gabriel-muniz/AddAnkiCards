@@ -55,7 +55,7 @@ def main_combinador():
     # embaralhamos elas
     combinacoes_embaralhada = embaralhe(combinacoes)
     # distriuimos nas listas
-    combinacoes_distribuidas = distribua(
+    combinacoes_distribuidas, countCards = distribua(
         combinacoes_embaralhada, quant_cards_por_d, num_max_cards
     )
     # calculamos os valores das combinacoes:
@@ -81,7 +81,12 @@ def main_combinador():
         )
     # armazenando elas no arquivo
     armazene(
-        listCardFinal, operacao, sao_dois_intervalos, intervalo, infoProduct
+        listCardFinal,
+        operacao,
+        sao_dois_intervalos,
+        intervalo,
+        countCards,
+        infoProduct,
     )
     # informando a condicao final do produto
     informe(infoProduct)

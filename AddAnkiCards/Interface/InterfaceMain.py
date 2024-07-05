@@ -1,9 +1,14 @@
 import customtkinter as ctk
 
+from AddAnkiCards.Db import DbConnect, DbSearch
+from AddAnkiCards.logginMain import get_logger
+
 
 class WindowMain(object):
-    def __init__(self, dbConnect, Logger) -> None:
-        '''Classe que representa as janelas do programa'''
+    def __init__(
+        self, dbConnect=DbConnect.DbConnect(), Logger=get_logger()
+    ) -> None:
+        """Classe que representa as janelas do programa"""
         #
         # Iniciamos a janela
         self.Master = ctk.CTk()
@@ -20,12 +25,21 @@ class WindowMain(object):
         self.LabelEnglish.grid(row=0, column=0, columns=2, padx=5, pady=5)
         #
         # Coletamos os dados dos cartoes e mostramos na janela
-        # TODO: fazer uma funcao que busca as informacao no banco de dados
-        InfoEnglish = ['Added Notes: n', 'Stored Notes: n', 'All Notes: n']
+        DbSearched = DbSearch.DbResearcher()
+        (
+            AddedNotesEnglish,
+            StoredNotesEnglish,
+            AllNotesEnglish,
+        ) = DbSearched.countNotesOfEnglish()
+        InfoEnglish = [
+            f'Added Notes: {AddedNotesEnglish}',
+            f'Stored Notes: {StoredNotesEnglish}',
+            f'All Notes: {AllNotesEnglish}',
+        ]
         self.labelEnglishInfo = ctk.CTkLabel(
             self.Master,
-            text=f'{InfoEnglish[0]:>} | ' +
-            f'{InfoEnglish[1]:<}\n{InfoEnglish[2]:^}',
+            text=f'{InfoEnglish[0]:>} | '
+            + f'{InfoEnglish[1]:<}\n{InfoEnglish[2]:^}',
         )
         self.labelEnglishInfo.grid(row=1, column=0, columns=2, padx=5, pady=5)
         #
@@ -40,16 +54,14 @@ class WindowMain(object):
         #
         #
         self.btnEnglishMake = ctk.CTkButton(
-            self.Master,
-            height=70,
-            text='Make Cards',
-            fg_color=self.colorTheme
+            self.Master, height=70, text='Make Cards', fg_color=self.colorTheme
         )
         self.btnEnglishMake.grid(row=2, column=1, padx=5, pady=5)
         #
         # Fazemos a divisoria
         ctk.CTkCanvas(self.Master, height=0, width=300).grid(
-            row=3, column=0, columns=2, pady=5)
+            row=3, column=0, columns=2, pady=5
+        )
         #
         # E fazemos a mesma coisa para as opcoes e informacoes de informatica
         self.LabelMath = ctk.CTkLabel(
@@ -58,12 +70,19 @@ class WindowMain(object):
         self.LabelMath.grid(row=4, column=0, columns=2, padx=5, pady=5)
         #
         # Informacoes
-        # TODO: fazer uma funcao que busca as informacao no banco de dados
-        InfoMath = ['Added Cards: n', 'Stored Cards: n', 'All Cards: n']
+        (
+            AddedCardsMath,
+            StoredCardsMath,
+            AllCardsMath,
+        ) = DbSearched.countCardsOfMath()
+        InfoMath = [
+            f'Added Cards: {AddedCardsMath}',
+            f'Stored Cards: {StoredCardsMath}',
+            f'All Cards: {AllCardsMath}',
+        ]
         self.labelMathInfo = ctk.CTkLabel(
             self.Master,
-            text=f'{InfoMath[0]:>} | ' +
-            f'{InfoMath[1]:<}\n{InfoMath[2]:^}',
+            text=f'{InfoMath[0]:>} | ' + f'{InfoMath[1]:<}\n{InfoMath[2]:^}',
         )
         self.labelMathInfo.grid(row=5, column=0, columns=2, padx=5, pady=5)
         #
@@ -78,10 +97,7 @@ class WindowMain(object):
         #
         #
         self.btnMathMake = ctk.CTkButton(
-            self.Master,
-            height=70,
-            text='Make Cards',
-            fg_color=self.colorTheme
+            self.Master, height=70, text='Make Cards', fg_color=self.colorTheme
         )
         self.btnMathMake.grid(row=6, column=1, padx=5, pady=5)
         self.Master.mainloop()
