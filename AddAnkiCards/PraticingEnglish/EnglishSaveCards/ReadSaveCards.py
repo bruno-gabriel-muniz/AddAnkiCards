@@ -1,4 +1,38 @@
-def reader(Novo_Treino, separador_tra='🔊'):
+def reader(
+    trainingData: str,
+    separetorSentence: str = '|',
+    separetorTranslate: str = ';',
+) -> list:
+    """
+    Funcao que le as frases e traducoes e devolve eles separado em uma lista.
+    """
+    sentences = trainingData.split(separetorSentence)
+    for sentenceAndTranslation in range(len(sentences)):
+        sentences[sentenceAndTranslation] = sentences[
+            sentenceAndTranslation
+        ].split(separetorTranslate)
+        removes_useless_white_space(sentences[sentenceAndTranslation])
+    return sentences
+
+
+def removes_useless_white_space(sentenceAndTranslation):
+    """
+    Funcao que remove os espacos em branco inuteis nas frases e traducoes
+    """
+    for sentenceOrTranslation in range(len(sentenceAndTranslation)):
+        if sentenceAndTranslation[sentenceOrTranslation][0] == ' ':
+            sentenceAndTranslation[
+                sentenceOrTranslation
+            ] = sentenceAndTranslation[sentenceOrTranslation][1:]
+        if sentenceAndTranslation[sentenceOrTranslation][-1] == ' ':
+            sentenceAndTranslation[
+                sentenceOrTranslation
+            ] = sentenceAndTranslation[sentenceOrTranslation][:-1]
+
+
+'''
+# leitor usado para retirar as frases do site ManyThings
+def reader(Novo_Treino, separador_tra, ):
     """
     Funcao que lê o arquivo de entrada e separa cada frase e traducao em listas
     """
@@ -14,7 +48,7 @@ def reader(Novo_Treino, separador_tra='🔊'):
     for frase in Frases_separadas_tra:
         # e verificando se nao está vazia
         if frase == '' or frase == 'MP3 ':
-            # caso esteja indo para o próximo
+            # caso esteja, indo para o próximo
             continue
         # e separando as linhas delas
         frase_tra_separada_lin = frase.split('\n')
@@ -26,3 +60,4 @@ def reader(Novo_Treino, separador_tra='🔊'):
         )
     # retornando a lista para a funcao principal
     return Frases_prontas
+'''
