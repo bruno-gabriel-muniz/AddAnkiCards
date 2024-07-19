@@ -73,7 +73,7 @@ def test_simple_AddCloze_Integrate_Anki_Connect(caplog):
     Funcao que testa a conexao com o programa e a api do Anki-Connect
     """
     caplog.set_level(logging.DEBUG)
-    test = MainAddCardsEnglish.AddCardsEnglish(3, mockGeneralDB())
+    test = MainAddCardsEnglish.AddCardsEnglish(3, Db=mockGeneralDB())
     resultTest = test.addCards()
     resultTestError = [
         resultTest[0]['error'],

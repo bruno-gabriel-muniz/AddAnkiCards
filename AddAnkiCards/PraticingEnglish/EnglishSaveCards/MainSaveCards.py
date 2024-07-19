@@ -1,3 +1,4 @@
+from AddAnkiCards.Db.DbConnect import DbConnect
 from AddAnkiCards.PraticingEnglish.EnglishSaveCards import (
     AddDBSaveCards,
     ReadSaveCards,
@@ -9,6 +10,7 @@ def mainSaveCards(
     separatorCards: str,
     separetorTranslate: str,
     languageCards: str = 'english',
+    Db=DbConnect(),
 ):
     """
     Funcao principal da leitura do arquivo com as frases.
@@ -19,5 +21,5 @@ def mainSaveCards(
         newCards, separatorCards, separetorTranslate
     )
     AddDBSaveCards.armazenaSQLite(
-        lista_pag_entrada, languageCards=languageCards
+        lista_pag_entrada, languageCards=languageCards, DbConnect=Db
     )

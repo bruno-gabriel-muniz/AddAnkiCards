@@ -33,6 +33,8 @@ class AddCardsEnglish(object):
 
         self.apiAnkiConnect = apiAnkiConnect
         self.conexaoDb = Db
+        self.nameDeck = nameDeck
+        self.nameTag = nameTag
         cursor = self.conexaoDb.cursor()
         self.logger = logger
         self.logger.debug('AddCardsEnglish Started')
@@ -112,15 +114,14 @@ class AddCardsEnglish(object):
                 'action': 'addNote',
                 'params': {
                     'note': {
-                        'deckName': 'conhecimentos::3.inglês New f::3.'
-                        + ' inglês new f 4',
+                        'deckName': f'{self.nameDeck}',
                         'modelName': 'cloze',
                         'fields': {'text': campoText, 'Back Extra': ''},
                         'options': {
                             'allowDuplicate': False,
                             'duplicateScope': 'deck',
                         },
-                        'tags': ['Linguas::inglês::ler_e_falar::1.0'],
+                        'tags': [f'{self.nameTag}'],
                     }
                 },
                 'version': 6,
