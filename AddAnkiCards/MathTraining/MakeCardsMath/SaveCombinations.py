@@ -81,7 +81,7 @@ def calcula(combinacoes: list, operacao: str) -> str:
     Funcao que calcula os resultados das combinacoes sendo
     operadas pelos operadores (+, -, *, /).
     """
-    if operacao == 'som':
+    if operacao == 'sum':
         operatorAuxi = '+'
         #
         # passamos por todos os cards
@@ -114,7 +114,7 @@ def calcula(combinacoes: list, operacao: str) -> str:
                 combinacao.append(resultado)
     else:
         raise ValueError(
-            'A operacao so pode ser "som", "sub", "mul" ou '
+            'A operacao so pode ser "sum", "sub", "mul" ou '
             + '"div" com estes mesmos caracteres'
         )
     return operatorAuxi

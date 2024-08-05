@@ -2,10 +2,9 @@ import customtkinter as ctk
 
 from AddAnkiCards.Db import DbConnect, DbSearch
 from AddAnkiCards.logginMain import get_logger
+from AddAnkiCards.MathTraining.MakeCardsMath import MainMakeCards
 from AddAnkiCards.PraticingEnglish.AddCardsEnglish import MainAddCardsEnglish
 from AddAnkiCards.PraticingEnglish.EnglishSaveCards import MainSaveCards
-
-MainSaveCards
 
 
 class WindowMain(object):
@@ -71,7 +70,7 @@ class WindowMain(object):
             row=3, column=0, columns=2, pady=5
         )
         #
-        # E fazemos a mesma coisa para as opcoes e informacoes de informatica
+        # E fazemos a mesma coisa para as opcoes e informacoes da matematica
         self.LabelMath = ctk.CTkLabel(
             self.Master, text='Math', font=('Arial', 30)
         )  # titulo
@@ -102,7 +101,11 @@ class WindowMain(object):
         #
         #
         self.btnMathMake = ctk.CTkButton(
-            self.Master, height=70, text='Make Cards', fg_color=self.colorTheme
+            self.Master,
+            height=70,
+            text='Make Cards',
+            command=self.makeWinMakeMath,
+            fg_color=self.colorTheme,
         )
         self.btnMathMake.grid(row=6, column=1, padx=5, pady=5)
         #
@@ -146,6 +149,9 @@ class WindowMain(object):
         Funcao que inicia a janela que faz/salva os cards de ingles
         """
         WinMakeEnglish(self.Master, self.colorTheme)
+
+    def makeWinMakeMath(self):
+        WinMakeMath(self.Master, self.colorTheme)
 
     def makeWinAddCardsEnglish(self):
         """
@@ -270,7 +276,7 @@ class WinAddCardsEnglish(object):
         #
         # O campo de insercao da quantidade dos cartoes
         self.quantCards = ctk.CTkEntry(
-            self.window, placeholder_text='Num. of cards'
+            self.window, placeholder_text='Num. of Cards'
         )
         self.quantCards.grid(row=1, column=0, padx=5, pady=5)
         #
@@ -307,6 +313,399 @@ class WinAddCardsEnglish(object):
             text=f'{self.InfoEnglish[0]:>} | {self.InfoEnglish[1]:<}'
             + f'\n{self.InfoEnglish[2]:^}'
         )
+
+
+class WinMakeMath(object):
+    def __init__(self, master, colorTheme) -> None:
+        #
+        # Informacoes da janela.
+        self.master = master
+        self.colorTheme = colorTheme
+        self.varOneOrTwoRange = 'One Range'
+        self.cardsWasMaked = False
+        self.countTimeForShowAddedForUser = 0
+        #
+        # configuracoes iniciais
+        self.window = ctk.CTkToplevel(self.master)
+        self.window.title('Make Math Cards')
+        #
+        # Abas da entrada dos intervalos
+        self.tabIntervalos = ctk.CTkTabview(
+            self.window,
+            height=100,
+        )
+        self.tabIntervalos.grid(row=0, column=0, columns=2)
+        self.tab1Intervalo = self.tabIntervalos.add('One Range')
+        self.tab2Intervalos = self.tabIntervalos.add('Two Ranges')
+        #
+        # Configuracoes da primeira
+        self.label1IntervaloStart = ctk.CTkLabel(
+            self.tab1Intervalo, text='Start of Range'
+        )
+        self.label1IntervaloStart.grid(row=0, column=0, padx=5)
+        #
+        self.entry1IntervaloStart = ctk.CTkEntry(
+            self.tab1Intervalo, placeholder_text='"1" if range is 1 to 10'
+        )
+        self.entry1IntervaloStart.grid(row=1, column=0, padx=5)
+        #
+        self.label1IntervaloEnd = ctk.CTkLabel(
+            self.tab1Intervalo, text='End of Range'
+        )
+        self.label1IntervaloEnd.grid(row=0, column=1, padx=5)
+        #
+        self.entry1IntervaloEnd = ctk.CTkEntry(
+            self.tab1Intervalo, placeholder_text='"10" if range is 1 to 10'
+        )
+        self.entry1IntervaloEnd.grid(row=1, column=1, padx=5)
+        #
+        # Configuracoes da segunda aba
+        self.label2IntervalosRange1 = ctk.CTkLabel(
+            self.tab2Intervalos, text='First Range'
+        )
+        self.label2IntervalosRange1.grid(row=0, column=0, padx=5)
+        #
+        self.entry2IntervalosRange1 = ctk.CTkEntry(
+            self.tab2Intervalos, placeholder_text='"1 9" if range is 1 to 9'
+        )
+        self.entry2IntervalosRange1.grid(row=1, column=0, padx=5)
+        #
+        self.label2IntervalosRange2 = ctk.CTkLabel(
+            self.tab2Intervalos, text='Second Range'
+        )
+        self.label2IntervalosRange2.grid(row=0, column=1, padx=5)
+        #
+        self.entry2IntervalosRange2 = ctk.CTkEntry(
+            self.tab2Intervalos,
+            placeholder_text='"10 99" if range is 10 to 99',
+        )
+        self.entry2IntervalosRange2.grid(row=1, column=1, padx=5)
+        #
+        # Entrada do tipo da operacao e a quantidade maxima de cards por nota
+        self.labelTypeOperationMath = ctk.CTkLabel(
+            self.window, text='Type of Operetion'
+        )
+        self.labelTypeOperationMath.grid(row=1, column=0, padx=5)
+        self.typeOperationMath = ctk.CTkOptionMenu(
+            self.window,
+            values=['sum', 'sub', 'mul', 'div'],
+            fg_color=self.colorTheme,
+        )
+        self.typeOperationMath.grid(row=2, column=0, padx=5)
+        #
+        self.labelNumMaxCards = ctk.CTkLabel(
+            self.window, text='Max. Num. Cards Per Note'
+        )
+        self.labelNumMaxCards.grid(row=1, column=1, padx=5)
+        self.entryNumMaxCards = ctk.CTkEntry(self.window)
+        self.entryNumMaxCards.grid(row=2, column=1, padx=5)
+        #
+        # Numero de notas que serao cridas, o botao que as cria e a
+        # quantidade de cards esperados
+        self.LabelNumOfNotes = ctk.CTkLabel(
+            self.window,
+            text='Num. Of Notes',
+        )
+        self.LabelNumOfNotes.grid(row=3, column=0, padx=5)
+        self.entryNumOfNotes = ctk.CTkEntry(self.window)
+        self.entryNumOfNotes.grid(row=4, column=0, padx=5)
+        #
+        self.btnMakeCards = ctk.CTkButton(
+            self.window,
+            text='Make Cards',
+            fg_color=self.colorTheme,
+            command=self.makeCards,
+        )
+        self.btnMakeCards.grid(row=4, column=1, padx=5)
+        #
+        self.labelPredictedResult = ctk.CTkLabel(
+            self.window, text='None', text_color=self.colorTheme
+        )
+        self.labelPredictedResult.grid(
+            row=5,
+            column=0,
+            columns=2,
+            padx=5,
+            pady=5,
+        )
+        #
+        # Atualizamos os dados da janela e rodamos ela
+        self.updateInformation()
+        self.window.mainloop()
+
+    def getNumOfRanges(self):
+        """
+        Metodo que atualiza se serao usados um ou dois intervalos
+        """
+        self.varOneOrTwoRange = self.tabIntervalos.get()
+
+    def getDataOfRanges(self) -> list | str:
+        """
+        Metodo que coleta os dados dos ranges e devolve erros informativos*
+
+        *caso o usuario coloque entradas erradas
+        """
+        #
+        # Verificamos se serao usados 1 ou 2 ranges
+        if self.varOneOrTwoRange == 'One Range':
+            #
+            # Tentamos processar a entrada como se fosse inteiros
+            try:
+                result = [
+                    int(str(self.entry1IntervaloStart.get())),
+                    int(str(self.entry1IntervaloEnd.get())),
+                ]
+                if result[0] >= result[1]:
+                    return (
+                        'E: O valor da entrada Start '
+                        + 'of Range tem que ser maior\n'
+                        + 'do que o valor da entrada End of Range.'
+                    )
+                return result
+            #
+            # Caso nao funcione informamos os usuarios que a
+            # entra so pode ser inteiros
+            except Exception:
+                return (
+                    'E: O valor da entrada Start '
+                    + 'of Range e End of Range\n'
+                    + 'tem que ser um número inteiro.'
+                )
+        #
+        # E fazemos a mesma coisa caso seja dois intervalos
+        elif self.varOneOrTwoRange == 'Two Ranges':
+            try:
+                result = [
+                    list(
+                        map(
+                            int, str(self.entry2IntervalosRange1.get()).split()
+                        )
+                    ),
+                    list(
+                        map(
+                            int, str(self.entry2IntervalosRange2.get()).split()
+                        )
+                    ),
+                ]
+                #
+                # testando se os valores obitidos sao numeros
+                (
+                    int(result[0][0])
+                    + int(result[0][1])
+                    + int(result[1][0])
+                    + int(result[1][1])
+                )
+                if (
+                    result[0][0] >= result[0][1]
+                    or result[1][0] >= result[1][1]
+                ):
+                    return (
+                        'E: O valor inicial da entrada de cada intervalo\n'
+                        + 'tem que ser menor do que o valor final.'
+                    )
+                return result
+            except Exception:
+                return (
+                    'E: O valor da entrada First Range '
+                    + 'e Second Range tem que ser dois\n'
+                    + 'números inteiros separado '
+                    + 'por um espaço.'
+                )
+        else:
+            # TODO: Fazer um report de log nas atualizações futuras
+            raise
+
+    def errorFound(self):
+        """
+        Metodo que analisa os erros e os mostra na janela.
+
+        Devolvendo False, caso nao tenha encontrados erros,
+        ou True, caso tenha.
+        """
+        if str(self.rangesValues).startswith('E'):
+            self.labelPredictedResult.configure(
+                text=self.rangesValues[3:]  # Mostrando a mensagem
+                # de erro do metodo que pega
+                # esses dados
+            )
+        elif not (
+            self.varNumMaxCardsPerNoteTest == 'n'
+            or (
+                self.varNumMaxCardsPerNoteTest.isdecimal()
+                and int(self.varNumMaxCardsPerNoteTest) > 0
+            )
+        ):
+            self.labelPredictedResult.configure(
+                text='O número máximo de cartões por notas\n'
+                + 'tem que ser um inteiro positivo ou a letra n,\n'
+                + 'caso você não queira colocar um limite.'
+            )
+        elif not (
+            self.varNumOfNotesTest.isdigit()
+            and int(self.varNumOfNotesTest) > 0
+        ):
+            self.labelPredictedResult.configure(
+                text='O número de notas tem que ser\n' + 'um inteiro positivo'
+            )
+        else:
+            return False
+        return True
+
+    def updateInformation(self):
+        """
+        Metodo que atualiza as informacoes da janela.
+
+        Ela informa o que esta errado na entrada do usuario,
+        os resultados esperados se todos os parametros forem
+        permitido pelo programa e mostra o feedback para quando o
+        usuário fazer os cartoes.
+        """
+        #
+        # Pegamos as informacoes da janela
+        self.getNumOfRanges()
+        self.rangesValues = self.getDataOfRanges()
+        self.varTipoOperationMath = str(self.typeOperationMath.get())
+        self.varNumMaxCardsPerNoteTest = str(self.entryNumMaxCards.get())
+        self.varNumOfNotesTest = str(self.entryNumOfNotes.get())
+        #
+        # Os analisamos em busca de erros.
+        if not self.errorFound():
+            #
+            # Caso nao encontremos
+            #
+            # Caso o usuario tenha acabado de fazer os cartoes
+            if self.cardsWasMaked is True:
+                # Mostramos que foram feitos por dois segundos
+                self.labelPredictedResult.configure(text='Added')
+                self.countTimeForShowAddedForUser += 1
+                if self.countTimeForShowAddedForUser >= 20:
+                    self.cardsWasMaked = False
+                self.window.after(100, self.updateInformation)
+                return None
+            #
+            # Fazemos a previsao
+            try:
+                self.varNumMaxCardsPerNote = int(
+                    self.varNumMaxCardsPerNoteTest
+                )
+            # Caso o numero maximo de cartoes ser n, ou seja,
+            # nao existit um numero maximo
+            except Exception:
+                self.varNumMaxCardsPerNote = 1000000  # 1 milhao
+            self.varNumOfNotes = int(self.varNumOfNotesTest)
+            #
+            # Verificamos se sao um ou dois intervalos
+            if self.varOneOrTwoRange == 'One Range':
+                #
+                # Se as operacoes sao sum/mul ou sub/div
+                if (
+                    self.varTipoOperationMath == 'sum'
+                    or self.varTipoOperationMath == 'mul'
+                ):
+                    #
+                    # Efetuamos os calculos
+                    tamanhoDoIntervalo = (
+                        self.rangesValues[1] - self.rangesValues[0] + 1
+                    )
+                    allCards = (
+                        tamanhoDoIntervalo * (tamanhoDoIntervalo - 1)
+                    ) / (2) + tamanhoDoIntervalo
+                    CardsPerNotes = allCards / self.varNumOfNotes
+                    if CardsPerNotes >= self.varNumMaxCardsPerNote:
+                        CardsPerNotes = self.varNumMaxCardsPerNote
+                    #
+                    # Mostramos os resultados
+                    self.labelPredictedResult.configure(
+                        text=f'Num Of Notes: {self.varNumOfNotes:.2f} | '
+                        + f'All Cards: {allCards:.2f}\n'
+                        + 'Cards That Will Be Used:'
+                        + f' {CardsPerNotes * self.varNumOfNotes:.2f}\n'
+                        + f'Num Cards Per Note: {CardsPerNotes:.2f}'
+                    )
+                else:
+                    #
+                    # Efetuamos os calculos
+                    tamanhoDoIntervalo = (
+                        self.rangesValues[1] - self.rangesValues[0] + 1
+                    )
+                    allCards = tamanhoDoIntervalo**2
+                    CardsPerNotes = allCards / self.varNumOfNotes
+                    if CardsPerNotes >= self.varNumMaxCardsPerNote:
+                        CardsPerNotes = self.varNumMaxCardsPerNote
+                    #
+                    # Mostramos os resultados
+                    self.labelPredictedResult.configure(
+                        text=f'Num Of Notes: {self.varNumOfNotes:.2f} | '
+                        + f'All Cards: {allCards:.2f}\n'
+                        + 'Cards That Will Be Used:'
+                        + f' {CardsPerNotes * self.varNumOfNotes:.2f}\n'
+                        + f'Num Cards Per Note: {CardsPerNotes:.2f}'
+                    )
+            else:
+                if (
+                    self.varTipoOperationMath == 'sum'
+                    or self.varTipoOperationMath == 'mul'
+                ):
+                    #
+                    # Efetuamos os calculos
+                    tamanhoDosIntervalos = [
+                        self.rangesValues[0][1] - self.rangesValues[0][0] + 1,
+                        self.rangesValues[1][1] - self.rangesValues[1][0] + 1,
+                    ]
+                    allCards = (
+                        tamanhoDosIntervalos[0] * tamanhoDosIntervalos[1]
+                    )
+                    CardsPerNotes = allCards / self.varNumOfNotes
+                    if CardsPerNotes >= self.varNumMaxCardsPerNote:
+                        CardsPerNotes = self.varNumMaxCardsPerNote
+                    #
+                    # Mostramos os resultados
+                    self.labelPredictedResult.configure(
+                        text=f'Num Of Notes: {self.varNumOfNotes:.2f} | '
+                        + f'All Cards: {allCards:.2f}\n'
+                        + 'Cards That Will Be Used:'
+                        + f' {CardsPerNotes * self.varNumOfNotes:.2f}\n'
+                        + f'Num Cards Per Note: {CardsPerNotes:.2f}'
+                    )
+                else:
+                    #
+                    # Efetuamos os calculos
+                    tamanhoDosIntervalos = [
+                        self.rangesValues[0][1] - self.rangesValues[0][0] + 1,
+                        self.rangesValues[1][1] - self.rangesValues[1][0] + 1,
+                    ]
+                    allCards = (
+                        tamanhoDosIntervalos[0] * tamanhoDosIntervalos[1] * 2
+                    )
+                    CardsPerNotes = allCards / self.varNumOfNotes
+                    if CardsPerNotes >= self.varNumMaxCardsPerNote:
+                        CardsPerNotes = self.varNumMaxCardsPerNote
+                    #
+                    # Mostramos os resultados
+                    self.labelPredictedResult.configure(
+                        text=f'Num Of Notes: {self.varNumOfNotes:.2f} | '
+                        + f'All Cards: {allCards:.2f}\n'
+                        + 'Cards That Will Be Used:'
+                        + f' {CardsPerNotes * self.varNumOfNotes:.2f}\n'
+                        + f'Num Cards Per Note: {CardsPerNotes:.2f}'
+                    )
+        self.window.after(100, self.updateInformation)
+
+    def makeCards(self):
+        """
+        Metodo que faz os cartoes de matematica caso nao encontre erros.
+
+        Retorno -> None
+        """
+        if not (self.errorFound()):
+            MainMakeCards.main_make_cards(
+                self.varNumOfNotes,
+                self.varOneOrTwoRange == 'Two Ranges',
+                self.rangesValues,
+                self.varNumMaxCardsPerNote,
+                self.varTipoOperationMath,
+            )
+            self.cardsWasMaked = True
 
 
 if __name__ == '__main__':

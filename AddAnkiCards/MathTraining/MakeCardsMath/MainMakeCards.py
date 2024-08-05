@@ -1,35 +1,41 @@
 """Modulo proncipal da criacao dos cards de matematica."""
+import sqlite3
+
+from AddAnkiCards.Db import DbConnect
+
 # importando a funcao que pede as informacoes para o usuario.
 # importando a parte do programa que encontra as possibilidades
-from FindCombinations import (
+from AddAnkiCards.MathTraining.MakeCardsMath.FindCombinations import (
     Find2CombSomMul,
     Find2CombSubDiv,
     FindCombSomMul,
     FindCombSubDiv,
 )
-from InfoCombinations import informe, pergunte
 
 # importando a parte do programa que formata, o que foi
 # encontrado, para treinar no Anki
-from SaveCombinations import armazene, calcula, distribua, embaralhe, formata
+from AddAnkiCards.MathTraining.MakeCardsMath.SaveCombinations import (
+    armazene,
+    calcula,
+    distribua,
+    embaralhe,
+    formata,
+)
 
 
-def main_combinador():
+def main_make_cards(
+    quant_of_notes: int,
+    sao_dois_intervalos: bool,
+    intervalo: list,
+    num_max_cards_per_note: int,
+    operacao: str,
+    Db: sqlite3.Connection = DbConnect.DbConnect(),
+):
     """
-    Funcao Principal do Algorito.
-    - Pede as informacoes sobre as combinacoes;
+    Funcao que faz as combinacoes.
     - Encontra todas possibilidades; e
-    - Armazena elas em quantos arquivos a pessoa quiser
-      de maneira alteatória ou nao
+    - Armazena elas no banco de dados
     """
-    # pedindo as informacoes sobre a combinacao
-    (
-        quant_cards_por_d,
-        sao_dois_intervalos,
-        intervalo,
-        num_max_cards,
-        operacao,
-    ) = pergunte()
     # verificamos se o usuário escolheu dois intervalos ou somente 1
     if sao_dois_intervalos:
         # caso tenha escolhido 2, verificamos se escolheu
@@ -56,7 +62,7 @@ def main_combinador():
     combinacoes_embaralhada = embaralhe(combinacoes)
     # distriuimos nas listas
     combinacoes_distribuidas, countCards = distribua(
-        combinacoes_embaralhada, quant_cards_por_d, num_max_cards
+        combinacoes_embaralhada, quant_of_notes, num_max_cards_per_note
     )
     # calculamos os valores das combinacoes:
     operatorAuxi = calcula(combinacoes_distribuidas, operacao)
@@ -88,8 +94,7 @@ def main_combinador():
         countCards,
         infoProduct,
     )
-    # informando a condicao final do produto
-    informe(infoProduct)
 
 
-main_combinador()
+if __name__ == '__main__':
+    main_make_cards()

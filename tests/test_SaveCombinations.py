@@ -124,7 +124,7 @@ def test_calcula1Intervalo():
         resultMulTest1, 9, 'n')
     #
     # e enfim chamamos a funcao que esta sendo testada
-    SaveCombinations.calcula(resultSomTest1, 'som')
+    SaveCombinations.calcula(resultSomTest1, 'sum')
     SaveCombinations.calcula(resultMulTest1, 'mul')
     #
     # as testamos com valores aleatorios delas.
@@ -172,8 +172,8 @@ def test_armazeneSimple():
     cursorTest = conexaoDeTest.cursor()
     #
     # preparamos o ambiente para este teste
-    operatorAuxi1 = SaveCombinations.calcula(combinacoesTest1, 'som')
-    operatorAuxi2 = SaveCombinations.calcula(combinacoesTest2, 'som')
+    operatorAuxi1 = SaveCombinations.calcula(combinacoesTest1, 'sum')
+    operatorAuxi2 = SaveCombinations.calcula(combinacoesTest2, 'sum')
     listCardFinalTest1 = []
     listCardFinalTest2 = []
     infoProduct1 = {}
@@ -182,19 +182,19 @@ def test_armazeneSimple():
     for cardTest in combinacoesTest1:
         cont_id += 1
         listCardFinalTest1.append(SaveCombinations.formata(
-            cardTest, operatorAuxi1, 'som', [1, 9], cont_id, infoProduct1))
+            cardTest, operatorAuxi1, 'sum', [1, 9], cont_id, infoProduct1))
     cont_id = 0
     for cardTest in combinacoesTest2:
         cont_id += 1
         listCardFinalTest2.append(SaveCombinations.formata(
-            cardTest, operatorAuxi2, 'som', [1, 9], cont_id, infoProduct2))
+            cardTest, operatorAuxi2, 'sum', [1, 9], cont_id, infoProduct2))
     #
     # Rodamos a funcao que esta sendo testado
     SaveCombinations.armazene(
-        listCardFinalTest1, 'som', False, [1, 9], numCards, infoProduct1,
+        listCardFinalTest1, 'sum', False, [1, 9], numCards, infoProduct1,
         DbConnect.DbConnect('DbTest.db'))
     SaveCombinations.armazene(
-        listCardFinalTest2, 'som', False, [1, 9], numCards, infoProduct2,
+        listCardFinalTest2, 'sum', False, [1, 9], numCards, infoProduct2,
         DbConnect.DbConnect('DbTest.db'))
     #
     # Pesquisamos os valores que estao sendo testados no banco de dados de

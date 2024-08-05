@@ -11,7 +11,7 @@ logger = get_logger()
 # Testes sobre encontrar todas as possibilidades ###
 
 
-def somAllCombSomMul1(minTerm: int, maxTerm: int) -> int:
+def sumAllCombSomMul1(minTerm: int, maxTerm: int) -> int:
     """
     Funcao que calcula a quantidades de combinacoes possiveis na soma
     e multiplicacao de termos do mesmo intervalo.
@@ -32,7 +32,7 @@ def somAllCombSomMul1(minTerm: int, maxTerm: int) -> int:
     return int((factorial(n) / (factorial(2) * factorial(n - 2))) + n)
 
 
-def somAllCombSubDiv1(minTerm: int, maxTerm: int) -> int:
+def sumAllCombSubDiv1(minTerm: int, maxTerm: int) -> int:
     """
     Funcao que calcula a quantidades de arranjos possiveis na subtracao
     e divisao de termos do mesmo intervalo.
@@ -54,7 +54,7 @@ def somAllCombSubDiv1(minTerm: int, maxTerm: int) -> int:
     return n**2
 
 
-def somAllCombSomMul2(menorInter: tuple, maiorInter: tuple) -> int:
+def sumAllCombSomMul2(menorInter: tuple, maiorInter: tuple) -> int:
     """
     Func. que calcula o maximo de combinacoes entre valores de dois intervalos.
     Levando em concideracao que isso eh a combinacao dos valores dos dois
@@ -68,7 +68,7 @@ def somAllCombSomMul2(menorInter: tuple, maiorInter: tuple) -> int:
     return TamanhoInterMaior * TamanhoInterMenor
 
 
-def somAllCombSubDiv2(menorInter: tuple, maiorInter: tuple) -> int:
+def sumAllCombSubDiv2(menorInter: tuple, maiorInter: tuple) -> int:
     """
     Func. que calcula o maximo de combinacoes entre valores de dois intervalos.
     Levando em concideracao que isso eh a combinacao dos valores dos dois
@@ -86,81 +86,81 @@ def somAllCombSubDiv2(menorInter: tuple, maiorInter: tuple) -> int:
 def test_FindCombSomMul_AllCombinations(caplog):
     """
     Funcao que testa se todas as possibilidades foram encontradas.
-    Levando em consideracao os calculas da funcao 'somAllCombinationsSomMul1'.
+    Levando em consideracao os calculas da funcao 'sumAllCombinationsSomMul1'.
     """
     print('\nCombinacao 1-9: ', end='')
-    assert len(FindCombinations.FindCombSomMul([1, 9])) == somAllCombSomMul1(
+    assert len(FindCombinations.FindCombSomMul([1, 9])) == sumAllCombSomMul1(
         1, 9
     )
     print('Combinacao 10-99: ', end='')
-    assert len(FindCombinations.FindCombSomMul([10, 99])) == somAllCombSomMul1(
+    assert len(FindCombinations.FindCombSomMul([10, 99])) == sumAllCombSomMul1(
         10, 99
     )
     print('Combinacao 100-999: ', end='')
     assert len(
         FindCombinations.FindCombSomMul([100, 999])
-    ) == somAllCombSomMul1(100, 999)
+    ) == sumAllCombSomMul1(100, 999)
 
 
 def test_FindCombSubDiv_AllCombinations(caplog):
     """
     Funcao que testa se todas as possibilidades foram encontradas.
-    Levando em consideracao os calculas da funcao 'somAllCombinationsSubDiv1'.
+    Levando em consideracao os calculas da funcao 'sumAllCombinationsSubDiv1'.
     """
     print('\nCombinacao 1-9: ', end='')
-    assert len(FindCombinations.FindCombSubDiv([1, 9])) == somAllCombSubDiv1(
+    assert len(FindCombinations.FindCombSubDiv([1, 9])) == sumAllCombSubDiv1(
         1, 9
     )
     print('Combinacao 10-99: ', end='')
-    assert len(FindCombinations.FindCombSubDiv([10, 99])) == somAllCombSubDiv1(
+    assert len(FindCombinations.FindCombSubDiv([10, 99])) == sumAllCombSubDiv1(
         10, 99
     )
     print('Combinacao 100-999: ', end='')
     assert len(
         FindCombinations.FindCombSubDiv([100, 999])
-    ) == somAllCombSubDiv1(100, 999)
+    ) == sumAllCombSubDiv1(100, 999)
 
 
 def test_FindCombSomMul_AllCombinations2(caplog):
     """
     Funcao que testa se todas as possibilidades foram encontradas.
-    Levando em consideracao os calculas da funcao 'somAllCombinationsSomMul2'.
+    Levando em consideracao os calculas da funcao 'sumAllCombinationsSomMul2'.
     """
     print('\nCombinacao (1-9)-(10-99): ', end='')
     assert len(
         FindCombinations.Find2CombSomMul([1, 9], [10, 99])
-    ) == somAllCombSomMul2([1, 9], [10, 99])
+    ) == sumAllCombSomMul2([1, 9], [10, 99])
 
     print('Combinacao (1-9)-(100-999): ', end='')
     assert len(
         FindCombinations.Find2CombSomMul([1, 9], [100, 999])
-    ) == somAllCombSomMul2([1, 9], [100, 999])
+    ) == sumAllCombSomMul2([1, 9], [100, 999])
 
     print('Combinacao (10-99)-(100-999): ', end='')
     assert len(
         FindCombinations.Find2CombSomMul([10, 99], [100, 999])
-    ) == somAllCombSomMul2([10, 99], [100, 999])
+    ) == sumAllCombSomMul2([10, 99], [100, 999])
 
 
 def test_FindCombSubDiv_AllCombinations2(caplog):
     """
     Funcao que testa se todas as possibilidades foram encontradas.
-    Levando em consideracao os calculas da funcao 'somAllCombinationsSubDiv2'.
+    Levando em consideracao os calculas da funcao 'sumAllCombinationsSubDiv2'.
     """
     print('\nCombinacao (1-9)-(10-99): ', end='')
     assert len(
         FindCombinations.Find2CombSubDiv([1, 9], [10, 99])
-    ) == somAllCombSubDiv2([1, 9], [10, 99])
+    ) == sumAllCombSubDiv2([1, 9], [10, 99])
 
     print('Combinacao (1-9)-(100-990): ', end='')
     assert len(
         FindCombinations.Find2CombSubDiv([1, 9], [100, 999])
-    ) == somAllCombSubDiv2([1, 9], [100, 999])
+    ) == sumAllCombSubDiv2([1, 9], [100, 999])
 
     print('Combinacao (10-99)-(100-990): ', end='')
     assert len(
         FindCombinations.Find2CombSubDiv([10, 99], [100, 999])
-    ) == somAllCombSubDiv2([10, 99], [100, 999])
+    ) == sumAllCombSubDiv2([10, 99], [100, 999])
 
 
 #
