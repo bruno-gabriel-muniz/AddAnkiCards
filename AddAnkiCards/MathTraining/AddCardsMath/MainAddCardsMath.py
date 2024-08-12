@@ -16,7 +16,7 @@ class AddCardsMath(object):
 
     def __init__(self,
                  IdTipoCard: int,
-                 QuantCards: int,
+                 QuantNotes: int,
                  nameDeck: str = 'MathTraining',
                  nameTag: str = 'MathTraining::Training',
                  logger: logging.getLogger = logginMain.get_logger(),
@@ -36,12 +36,13 @@ class AddCardsMath(object):
         self.cardsForAdd = self.db.cursor().execute(
             'SELECT Card, IdCard FROM CardsCalculoMental ' +
             f'WHERE (TipoCard = {IdTipoCard} AND DataPriRev = "-") ' +
-            f'ORDER BY IdCard ASC LIMIT {QuantCards}').fetchall()
-        self.QuantCards = QuantCards
+            f'ORDER BY IdCard ASC LIMIT {QuantNotes}').fetchall()
+        self.QuantNotes = QuantNotes
         #
         # Verifica se existe cards suficientes para a quantidade pedida
-        if len(self.cardsForAdd) != QuantCards:
-            raise Exception(f'Cards Insuficientes do tipo {IdTipoCard}')
+        if len(self.cardsForAdd) != QuantNotes:
+            raise Exception(f'Cards Insuficientes do tipo {IdTipoCard}'
+                            + ' ou tipo inexistente.')
         #
         #
         self.logger.debug('AddCardsMath Started')  # Registrando
@@ -100,10 +101,11 @@ class AddCardsMath(object):
         NumNotesFree = self.db.execute(
             'SELECT NumNotesFree FROM TipoCardsCalculoMental ' +
             f'WHERE IdTipo = {self.idTipoCard}'
-        ).fetchall()
-        NewNumNotesFree = NumNotesFree - self.QuantCards
+        ).fetchall()[0][0]
+        NewNumNotesFree = NumNotesFree - self.QuantNotes
         self.db.execute('UPDATE TipoCardsCalculoMental ' +
-                        f'SET NumNotesFree={NewNumNotesFree}')
+                        f'SET NumNotesFree={NewNumNotesFree} ' +
+                        f'WHERE IdTipo = {self.idTipoCard}')
         self.db.commit()
 
 

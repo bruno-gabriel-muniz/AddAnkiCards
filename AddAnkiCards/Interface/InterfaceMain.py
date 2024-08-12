@@ -1,7 +1,10 @@
 import customtkinter as ctk
+from CTkTable import CTkTable
+import requests
 
 from AddAnkiCards.Db import DbConnect, DbSearch
 from AddAnkiCards.logginMain import get_logger
+from AddAnkiCards.MathTraining.AddCardsMath import MainAddCardsMath
 from AddAnkiCards.MathTraining.MakeCardsMath import MainMakeCards
 from AddAnkiCards.PraticingEnglish.AddCardsEnglish import MainAddCardsEnglish
 from AddAnkiCards.PraticingEnglish.EnglishSaveCards import MainSaveCards
@@ -96,6 +99,7 @@ class WindowMain(object):
             height=70,
             text='Add Cards',
             fg_color=self.colorTheme,
+            command=self.makeWinAddCardsMath
         )
         self.btnMathAdd.grid(row=6, column=0, padx=5, pady=5)
         #
@@ -161,6 +165,9 @@ class WindowMain(object):
             self.Master, self.colorTheme, self.InfoEnglish, self.DbSearched
         )
 
+    def makeWinAddCardsMath(self):
+        WinAddCardsMath(self.Master, self.colorTheme)
+
 
 class WinMakeEnglish(object):
     def __init__(self, master, colorTheme) -> None:
@@ -170,6 +177,7 @@ class WinMakeEnglish(object):
         self.master = master
         self.window = ctk.CTkToplevel(master)
         self.window.title('Make Cards English')
+        self.window.resizable(0, 0)
         #
         # Criamos os label que irao informar o usuario
         self.labelCardSeparetor = ctk.CTkLabel(
@@ -265,6 +273,7 @@ class WinAddCardsEnglish(object):
         # A janela,
         self.window = ctk.CTkToplevel(master)
         self.window.title('Add English Cards')
+        self.window.resizable(0, 0)
         #
         # Mostramos as informacoes dos cartoes,
         self.labelInfoCards = ctk.CTkLabel(
@@ -328,6 +337,7 @@ class WinMakeMath(object):
         # configuracoes iniciais
         self.window = ctk.CTkToplevel(self.master)
         self.window.title('Make Math Cards')
+        self.window.resizable(0, 0)
         #
         # Abas da entrada dos intervalos
         self.tabIntervalos = ctk.CTkTabview(
@@ -706,6 +716,145 @@ class WinMakeMath(object):
                 self.varTipoOperationMath,
             )
             self.cardsWasMaked = True
+
+
+class WinAddCardsMath(object):
+    '''
+    Classe que eh a janela que adiciona os cartoes de matematica.
+    '''
+
+    def __init__(self, master, colorTheme) -> None:
+        #
+        # Configuracoes da janela
+        self.master = master
+        self.window = ctk.CTkToplevel(self.master)
+        self.colorTheme = colorTheme
+        self.title = self.window.title('Add Math Cards')
+        self.numCardsAdded = 0
+        self.window.resizable(0, 0)
+        #
+        # Tabela que contem todos os tipos de cartoes de matematica
+        self.queryForTypeCardsMath = (
+            'SELECT IdTipo, TipoOperacao, Intervalo, NumNotes, ' +
+            'NumNotesFree, NumCardsForNotes FROM TipoCardsCalculoMental')
+        self.valuesOfTypeCardsMath = DbSearch.generic_search(
+            self.queryForTypeCardsMath)
+        self.tableShowsTypesOfMathNotes = CTkTable(
+            self.window,
+            values=[['Id of Type', 'Type of Operation', 'Range(s)',
+                    'Num of Notes', 'Num of Notes Free', 'Cards Per Notes']] +
+            self.valuesOfTypeCardsMath,
+        )
+        self.tableShowsTypesOfMathNotes.grid(
+            row=0, column=0, columns=4)
+        #
+        # Linha da entrada do id dos tipos das notas,
+        # da quantidade de notas, o botao que as adciona e
+        # a quantidade de cartões que foram adicionados
+        #
+        # Id Do Tipo
+        self.labelIdTypeNotesToBeAdded = ctk.CTkLabel(
+            self.window,
+            text='ID of the Type of Notes to be Added')
+        self.labelIdTypeNotesToBeAdded.grid(row=1, column=0)
+        #
+        self.entryIdTypeNotesToBeAdded = ctk.CTkEntry(
+            self.window,
+            width=150,
+            placeholder_text='Ex.: "1" if Id Of Type is 1')
+        self.entryIdTypeNotesToBeAdded.grid(row=2, column=0)
+        #
+        # Numero de cartoes
+        self.labelNumOfNotesToBeAdded = ctk.CTkLabel(
+            self.window, text='Num of Notes to be Added')
+        self.labelNumOfNotesToBeAdded.grid(row=1, column=1)
+        #
+        self.entryNumOfNotesToBeAdded = ctk.CTkEntry(self.window)
+        self.entryNumOfNotesToBeAdded.grid(row=2, column=1)
+        #
+        # Botao que os adiciona
+        self.btnAddCardsMath = ctk.CTkButton(
+            self.window,
+            text='Add Cards',
+            fg_color=self.colorTheme,
+            command=self.addCards,
+        )
+        self.btnAddCardsMath.grid(row=2, column=2)
+        #
+        # Informacao de quantos cartoes foram adicionados
+        self.labelNumCardsAdded = ctk.CTkLabel(
+            self.window,
+            text=f'Num of Cards Added: {self.numCardsAdded:.0f}',
+            text_color=self.colorTheme
+        )
+        self.labelNumCardsAdded.grid(row=2, column=3)
+        self.window.mainloop()
+
+    def addCards(self):
+        '''
+        Metodo que tenta adicionar os cartoes e mostra uma mensagem
+        de erro caso haja um erro na entrada.
+        '''
+        #
+        # Primeiro, tentamos rodar o programa.
+        try:
+            self.varIdTipoNota = int(self.entryIdTypeNotesToBeAdded.get())
+            self.varNumOfNotesToBeAdded = int(
+                self.entryNumOfNotesToBeAdded.get()
+            )
+            listResults = MainAddCardsMath.AddCardsMath(
+                self.varIdTipoNota,
+                self.varNumOfNotesToBeAdded,
+            ).addCards()
+            self.numCardsAdded += (
+                len(listResults) *
+                self.valuesOfTypeCardsMath[self.varIdTipoNota-1][5]
+            )
+            self.labelNumCardsAdded.configure(
+                text=f'Num of Cards Added: {self.numCardsAdded:.0f}'
+            )
+            self.updateTable()
+        #
+        # Caso, nao consigamos (por caso de um problema da api),
+        # retornamos uma janela de erro.
+        except requests.exceptions.ConnectionError:
+            self.windowOfError = ctk.CTkToplevel(self.window)
+            self.windowOfError.title('Error Window')
+            self.windowOfError.resizable(0, 0)
+            self.labelWindowError = ctk.CTkLabel(
+                self.windowOfError,
+                text='Anki Needs to be Open\nWith Anki Connect Installed',
+                font=('Arial', 20)
+            )
+            self.labelWindowError.grid(row=0, column=0)
+        #
+        # Caso, nao consigamos (devido a um erro de entrada),
+        # retornamos uma janela de erro.
+        except Exception:
+            self.windowOfError = ctk.CTkToplevel(self.window)
+            self.windowOfError.title('Error Window')
+            self.windowOfError.resizable(0, 0)
+            self.labelWindowError = ctk.CTkLabel(
+                self.windowOfError,
+                text='Number of notes to be added and ID of the type of \n'
+                + 'notes, must be integers and correspond to the number of \n'
+                + 'notes to be added and the ID of the note type,'
+                + ' respectively.',
+                font=('Arial', 20)
+            )
+            self.labelWindowError.grid(row=0, column=0)
+
+    def updateTable(self):
+        '''
+        Metodo que atualiza os dados da tabela do tipo de notas.
+        '''
+        varAntigoNotesFree = (
+            self.valuesOfTypeCardsMath[self.varIdTipoNota-1][4]
+        )
+        self.tableShowsTypesOfMathNotes.edit(
+            self.varIdTipoNota,
+            4,
+            text=f'{varAntigoNotesFree-self.varNumOfNotesToBeAdded}')
 
 
 if __name__ == '__main__':
