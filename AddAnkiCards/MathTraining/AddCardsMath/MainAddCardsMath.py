@@ -62,8 +62,10 @@ class AddCardsMath(object):
                     'params': {
                         'note': {
                             'deckName': self.nameDeck,
-                            'modelName': 'cloze',
-                            'fields': {'text': card[0], 'Back Extra': ''},
+                            'modelName': 'cloze (Hide all)',
+                            'fields': {'text': card[0],
+                                       'Back Extra': '',
+                                       'Hide others on the back side': '1'},
                             'options': {
                                 'allowDuplicate': False,
                                 'duplicateScope': 'deck',

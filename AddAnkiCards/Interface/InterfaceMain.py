@@ -1,6 +1,6 @@
 import customtkinter as ctk
-from CTkTable import CTkTable
 import requests
+from CTkTable import CTkTable
 
 from AddAnkiCards.Db import DbConnect, DbSearch
 from AddAnkiCards.logginMain import get_logger
@@ -99,7 +99,7 @@ class WindowMain(object):
             height=70,
             text='Add Cards',
             fg_color=self.colorTheme,
-            command=self.makeWinAddCardsMath
+            command=self.makeWinAddCardsMath,
         )
         self.btnMathAdd.grid(row=6, column=0, padx=5, pady=5)
         #
@@ -719,9 +719,9 @@ class WinMakeMath(object):
 
 
 class WinAddCardsMath(object):
-    '''
+    """
     Classe que eh a janela que adiciona os cartoes de matematica.
-    '''
+    """
 
     def __init__(self, master, colorTheme) -> None:
         #
@@ -735,18 +735,27 @@ class WinAddCardsMath(object):
         #
         # Tabela que contem todos os tipos de cartoes de matematica
         self.queryForTypeCardsMath = (
-            'SELECT IdTipo, TipoOperacao, Intervalo, NumNotes, ' +
-            'NumNotesFree, NumCardsForNotes FROM TipoCardsCalculoMental')
+            'SELECT IdTipo, TipoOperacao, Intervalo, NumNotes, '
+            + 'NumNotesFree, NumCardsForNotes FROM TipoCardsCalculoMental'
+        )
         self.valuesOfTypeCardsMath = DbSearch.generic_search(
-            self.queryForTypeCardsMath)
+            self.queryForTypeCardsMath
+        )
         self.tableShowsTypesOfMathNotes = CTkTable(
             self.window,
-            values=[['Id of Type', 'Type of Operation', 'Range(s)',
-                    'Num of Notes', 'Num of Notes Free', 'Cards Per Notes']] +
-            self.valuesOfTypeCardsMath,
+            values=[
+                [
+                    'Id of Type',
+                    'Type of Operation',
+                    'Range(s)',
+                    'Num of Notes',
+                    'Num of Notes Free',
+                    'Cards Per Notes',
+                ]
+            ]
+            + self.valuesOfTypeCardsMath,
         )
-        self.tableShowsTypesOfMathNotes.grid(
-            row=0, column=0, columns=4)
+        self.tableShowsTypesOfMathNotes.grid(row=0, column=0, columns=4)
         #
         # Linha da entrada do id dos tipos das notas,
         # da quantidade de notas, o botao que as adciona e
@@ -754,19 +763,21 @@ class WinAddCardsMath(object):
         #
         # Id Do Tipo
         self.labelIdTypeNotesToBeAdded = ctk.CTkLabel(
-            self.window,
-            text='ID of the Type of Notes to be Added')
+            self.window, text='ID of the Type of Notes to be Added'
+        )
         self.labelIdTypeNotesToBeAdded.grid(row=1, column=0)
         #
         self.entryIdTypeNotesToBeAdded = ctk.CTkEntry(
             self.window,
             width=150,
-            placeholder_text='Ex.: "1" if Id Of Type is 1')
+            placeholder_text='Ex.: "1" if Id Of Type is 1',
+        )
         self.entryIdTypeNotesToBeAdded.grid(row=2, column=0)
         #
         # Numero de cartoes
         self.labelNumOfNotesToBeAdded = ctk.CTkLabel(
-            self.window, text='Num of Notes to be Added')
+            self.window, text='Num of Notes to be Added'
+        )
         self.labelNumOfNotesToBeAdded.grid(row=1, column=1)
         #
         self.entryNumOfNotesToBeAdded = ctk.CTkEntry(self.window)
@@ -785,16 +796,16 @@ class WinAddCardsMath(object):
         self.labelNumCardsAdded = ctk.CTkLabel(
             self.window,
             text=f'Num of Cards Added: {self.numCardsAdded:.0f}',
-            text_color=self.colorTheme
+            text_color=self.colorTheme,
         )
         self.labelNumCardsAdded.grid(row=2, column=3)
         self.window.mainloop()
 
     def addCards(self):
-        '''
+        """
         Metodo que tenta adicionar os cartoes e mostra uma mensagem
         de erro caso haja um erro na entrada.
-        '''
+        """
         #
         # Primeiro, tentamos rodar o programa.
         try:
@@ -807,8 +818,8 @@ class WinAddCardsMath(object):
                 self.varNumOfNotesToBeAdded,
             ).addCards()
             self.numCardsAdded += (
-                len(listResults) *
-                self.valuesOfTypeCardsMath[self.varIdTipoNota-1][5]
+                len(listResults)
+                * self.valuesOfTypeCardsMath[self.varIdTipoNota - 1][5]
             )
             self.labelNumCardsAdded.configure(
                 text=f'Num of Cards Added: {self.numCardsAdded:.0f}'
@@ -824,7 +835,7 @@ class WinAddCardsMath(object):
             self.labelWindowError = ctk.CTkLabel(
                 self.windowOfError,
                 text='Anki Needs to be Open\nWith Anki Connect Installed',
-                font=('Arial', 20)
+                font=('Arial', 20),
             )
             self.labelWindowError.grid(row=0, column=0)
         #
@@ -840,21 +851,22 @@ class WinAddCardsMath(object):
                 + 'notes, must be integers and correspond to the number of \n'
                 + 'notes to be added and the ID of the note type,'
                 + ' respectively.',
-                font=('Arial', 20)
+                font=('Arial', 20),
             )
             self.labelWindowError.grid(row=0, column=0)
 
     def updateTable(self):
-        '''
+        """
         Metodo que atualiza os dados da tabela do tipo de notas.
-        '''
-        varAntigoNotesFree = (
-            self.valuesOfTypeCardsMath[self.varIdTipoNota-1][4]
-        )
+        """
+        varAntigoNotesFree = self.valuesOfTypeCardsMath[
+            self.varIdTipoNota - 1
+        ][4]
         self.tableShowsTypesOfMathNotes.edit(
             self.varIdTipoNota,
             4,
-            text=f'{varAntigoNotesFree-self.varNumOfNotesToBeAdded}')
+            text=f'{varAntigoNotesFree-self.varNumOfNotesToBeAdded}',
+        )
 
 
 if __name__ == '__main__':

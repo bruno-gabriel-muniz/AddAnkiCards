@@ -107,13 +107,16 @@ class DbResearcher(object):
         return AddedCardsMath, StoredCardsMath, AllCardsMath
 
 
-def generic_search(query: str, DbConnect=DbConnect.DbConnect(),) -> list:
-    '''
+def generic_search(
+    query: str,
+    DbConnect=DbConnect.DbConnect(),
+) -> list:
+    """
     Func. que faz uma busca generica no DB e retorna o resultado numa lista.
 
     Entrada: qualquer busca na linquagem sql em string, o nome do DB em str
     Saida: resultado da pesquisa em uma lista
-    '''
+    """
     result = DbConnect.execute(query)
     DbConnect.commit()
     return result.fetchall()
