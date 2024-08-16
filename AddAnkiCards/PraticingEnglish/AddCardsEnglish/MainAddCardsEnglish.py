@@ -73,11 +73,11 @@ class AddCardsEnglish(object):
         """
         return (
             f"""id: {self.traducoesFrases[traducaoFrase][0]}<br>
-{{{{c1::{self.traducoesFrases[traducaoFrase][1]}}}}} ->"""
-            + f""" {{{{c1::[sound:AddCardsAudio{self.traducoesFrases[
+{{{{c2::{self.traducoesFrases[traducaoFrase][1]}}}}} ->"""
+            + f""" {{{{c2::[sound:AddCardsAudio{self.traducoesFrases[
                 traducaoFrase][0]:0>6}.mp3]}}}}
     <ul>
-    {{{{c2::{self.traducoesFrases[traducaoFrase][2]}}}}}
+    {{{{c1::{self.traducoesFrases[traducaoFrase][2]}}}}}
     </ul>
 """
         )

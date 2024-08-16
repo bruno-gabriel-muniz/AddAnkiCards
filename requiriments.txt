@@ -2,3 +2,4 @@ customtkinter
 CTkTable
 gTTS
 requests
+pyinstaller
