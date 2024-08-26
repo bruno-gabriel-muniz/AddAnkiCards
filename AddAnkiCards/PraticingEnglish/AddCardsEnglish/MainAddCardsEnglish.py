@@ -91,18 +91,15 @@ class AddCardsEnglish(object):
         # criamos e salvamos o audio, editamos o corpo do cartao
         # atraves de um pouco de HTML e jogamos isso na api que vai
         # adicionar o cartao de forma automatica
-        resultList = []
+        resultCardList = []
+        resultAudioList = []
 
         for traducaoFrase in range(len(self.traducoesFrases)):
             audio = gtts.gTTS(self.traducoesFrases[traducaoFrase][1])
-
+            if not path.exists(path.join('.', 'collection.media')):
+                os.makedirs(path.join('.', 'collection.media'))
             pathAudio = path.join(
-                '/home',
-                f"{os.environ['USERNAME']}",
-                '.local',
-                'share',
-                'Anki2',
-                'Usuário 1',
+                os.getcwd(),
                 'collection.media',
                 'AddCardsAudio'
                 + f'{self.traducoesFrases[traducaoFrase][0]:0>6}.mp3',
@@ -110,7 +107,7 @@ class AddCardsEnglish(object):
             audio.save(pathAudio)
             campoText = self.formatTextCardCloze(traducaoFrase)
             self.logger.info(f'campoText = {campoText}')
-            requisisao = {
+            requisisaoCard = {
                 'action': 'addNote',
                 'params': {
                     'note': {
@@ -126,27 +123,46 @@ class AddCardsEnglish(object):
                 },
                 'version': 6,
             }
-            self.logger.info(f'The request is {requisisao}')
-            requisisao = json.dumps(requisisao)
-            result = requests.post(self.apiAnkiConnect, requisisao)
+            requisisaoAudio = {
+                'action': 'storeMediaFile',
+                'params': {
+                    'path': pathAudio,
+                    "filename": (
+                        'AddCardsAudio'
+                        + f'{self.traducoesFrases[traducaoFrase][0]:0>6}.mp3'),
+                },
+                'version': 5,
+            }
+            self.logger.info(f'The request is {requisisaoCard}')
+            requisisaoCard = json.dumps(requisisaoCard)
+            requisisaoAudio = json.dumps(requisisaoAudio)
+            resultCard = requests.post(self.apiAnkiConnect, requisisaoCard)
+            resultAudio = requests.post(self.apiAnkiConnect, requisisaoAudio)
 
-            # Finalmente mostramos o codigo do resultado da api, verifcamos
+            # Finalmente mostramos o codigo do resultCardado da api, verifcamos
             # se houve um erro (paramos o programa e relatamos no terminal,
             # se esse for o caso).
 
-            result = result.json()
-            resultList.append(result)
-            if result['error'] is not None:
-                self.logger.error(f"Error API AnkiConnect: {result['error']}")
-                return resultList
+            resultCard = resultCard.json()
+            resultAudio = resultAudio.json()
+            resultCardList.append(resultCard)
+            resultAudioList.append(resultAudio)
+            if resultCard['error'] is not None:
+                self.logger.error(f"Error API AnkiConnect: {
+                                  resultCard['error']}")
+                return resultCardList
+            elif resultAudio['error'] is not None:
+                self.logger.error(f"Error API AnkiConnect:{
+                                  resultAudio['error']}")
+                return resultAudioList
             self.logger.debug(
                 'Phrases with id '
                 + f'= {self.traducoesFrases[traducaoFrase][0]} '
                 + 'have been added in Anki'
             )
         self.updateDB()  # E atualizamos o DB
-        print(resultList)
-        return resultList
+        print(resultCardList)
+        return resultCardList
 
     def updateDB(self):
         """
