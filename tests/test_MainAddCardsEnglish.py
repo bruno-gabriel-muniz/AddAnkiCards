@@ -108,25 +108,26 @@ def test_format_Cards_AddCloze(caplog):
     # verificando a formatacao
     formatEspec = [
         f"""id: {exemplos['exemplo1'][0]}<br>
-{{{{c1::{exemplos['exemplo1'][1]}}}}} -> {{{{c1::[sound:AddCardsAudio{exemplos[
+{{{{c2::{exemplos['exemplo1'][1]}}}}} -> {{{{c2::[sound:AddCardsAudio{exemplos[
             'exemplo1'][0]:0>6}.mp3]}}}}
     <ul>
-    {{{{c2::{exemplos['exemplo1'][2]}}}}}
+    {{{{c1::{exemplos['exemplo1'][2]}}}}}
     </ul>
 """,
         f"""id: {exemplos['exemplo2'][0]}<br>
-{{{{c1::{exemplos['exemplo2'][1]}}}}} -> {{{{c1::[sound:AddCardsAudio{exemplos[
+{{{{c2::{exemplos['exemplo2'][1]}}}}} -> {{{{c2::[sound:AddCardsAudio{exemplos[
             'exemplo2'][0]:0>6}.mp3]}}}}
     <ul>
-    {{{{c2::{exemplos['exemplo2'][2]}}}}}
+    {{{{c1::{exemplos['exemplo2'][2]}}}}}
     </ul>
 """,
         f"""id: {exemplos['exemplo3'][0]}<br>
-{{{{c1::{exemplos['exemplo3'][1]}}}}} -> {{{{c1::[sound:AddCardsAudio{exemplos[
+{{{{c2::{exemplos['exemplo3'][1]}}}}} -> {{{{c2::[sound:AddCardsAudio{exemplos[
             'exemplo3'][0]:0>6}.mp3]}}}}
     <ul>
-    {{{{c2::{exemplos['exemplo3'][2]}}}}}
+    {{{{c1::{exemplos['exemplo3'][2]}}}}}
     </ul>
 """,
     ]
+    print(*results, *formatEspec)
     assert results == formatEspec

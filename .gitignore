@@ -1,6 +1,8 @@
 # Created by https://www.toptal.com/developers/gitignore/api/asdf,python,visualstudiocode,database
 # Edit at https://www.toptal.com/developers/gitignore?templates=asdf,python,visualstudiocode,database
 
+collection.media/
+
 ### asdf ###
 /.tool-versions
 
