@@ -3,4 +3,5 @@ blue
 isort
 pytest
 ipdb
+Prospector
 pip-autoremove

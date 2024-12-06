@@ -1,6 +1,6 @@
-from AddAnkiCards.Db.DbConnect import DbConnect
-from AddAnkiCards.PraticingEnglish.EnglishSaveCards import (AddDBSaveCards,
-                                                            ReadSaveCards)
+from add_anki_cards.Db.DbConnect import db_connect
+from add_anki_cards.PraticingEnglish.EnglishSaveCards import (AddDBSaveCards,
+                                                              ReadSaveCards)
 
 exemplo1 = (
     'While her poetic talent shines, she overlooks the joy and hope ' +
@@ -66,12 +66,12 @@ def test_read_cards_whit_whitespace():
 def test_simple_save_cards():
     global exemplo1
     print()
-    DbTest = DbConnect('DbTest.db')
-    AddDBSaveCards.armazenaSQLite(ReadSaveCards.reader(exemplo1), DbTest)
+    db_test = db_connect('DbTest.db', 'Test')
+    AddDBSaveCards.armazena_sqlite(ReadSaveCards.reader(exemplo1), db_test)
     # reabrindo o banco de dados pois ele eh fechado na funcao a cima
-    DbTest = DbConnect('DbTest.db')
+    db_test = db_connect('DbTest.db', 'Test')
     assert (
-        DbTest.cursor().execute('SELECT * FROM FrasesNaoUsadas').fetchall()
+        db_test.cursor().execute('SELECT * FROM FrasesNaoUsadas').fetchall()
     ) == [
         (
             1,
@@ -97,6 +97,6 @@ def test_simple_save_cards():
             'english'
         )
     ]
-    DbTest.execute('DROP TABLE FrasesNaoUsadas')
-    DbTest.close()
+    db_test.execute('DROP TABLE FrasesNaoUsadas')
+    db_test.close()
     print()

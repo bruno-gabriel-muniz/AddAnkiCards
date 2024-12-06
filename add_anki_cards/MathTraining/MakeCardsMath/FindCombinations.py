@@ -1,12 +1,12 @@
-def FindCombSomMul(intervalo: list) -> list:
+def find_comb_sum_mul(intervalo: list) -> list:
     """
-    Funcao que acha todas as possibilidades da combinacao de dois números
-    em determinado intervalo para operacoes de multiplicacpao e divisao.
+    Func. q acha todas as comb. de 2 nums em um intervalo para soma e mul.
+
     Como usar:
     ─ Argumentos: uma lista com no primerio índice o número mínimo
       do intervalo e no segundo, e ultimo, o máximo.
     """
-    rangeIsValid(intervalo)
+    range_is_valid(intervalo)
     # criando a lista que vai conter as possibilidades
     combinacoes = []
     # criando a variavel que cointa a quantidade de cartoes
@@ -21,20 +21,20 @@ def FindCombSomMul(intervalo: list) -> list:
             # adicionando a combinacao encontrada na lista
             combinacoes.append([numero_grande, numero_pequeno])
     # Contando para o usuário todas as possibilidades encontradas
-    print('Foram encontradas %i possibilidades possíveis.' % cont)
+    print(f'Foram encontradas {cont} possibilidades possíveis.')
     # returnando todas as possibiliades possíveis
     return combinacoes
 
 
-def FindCombSubDiv(intervalo: list) -> list:
+def find_comb_sub_div(intervalo: list) -> list:
     """
-    Funcao que acha todas as possibilidades da combinacao de dois números
-    em determinado intervalo para as operacoes de subtracao e divisao.
+    Func. q acha todas as comb. de 2 nums em um intervalo para sub e div.
+
     Como usar:
     ─ Argumentos: uma lista com no primerio índice o número mínimo
       do intervalo e no segundo, e ultimo, o máximo.
     """
-    rangeIsValid(intervalo)
+    range_is_valid(intervalo)
     # criando a lista que vai conter as possibilidades
     combinacoes = []
     # criando a variavel que conta a quantidade de cartoes
@@ -55,17 +55,21 @@ def FindCombSubDiv(intervalo: list) -> list:
             combinacoes.append([numero_grande, numero_pequeno])
             combinacoes.append([numero_pequeno, numero_grande])
     # Contando para o usuário todas as possibilidades encontradas
-    print('Foram encontradas %i possibilidades possíveis.' % cont)
+    print(f'Foram encontradas {cont} possibilidades possíveis.')
     # returnando todas as possibiliades possíveis
     return combinacoes
 
 
-def Find2CombSomMul(intervalo1: list, intervalo2: list) -> list:
+def find_2_comb_som_mul(intervalo1: list, intervalo2: list) -> list:
     """
-    Funcao que encontra Todas possibilidades das combinacoes de
-    números entre dois intervalos para o treino de soma e multiplicacao
+    Func. q acha todas as comb. de 2 nums em dois intervalos para soma e mul.
+
+    Como usar:
+    ─ Argumentos: duas listas com no primerio índice o número mínimo
+      do intervalo e no segundo, e ultimo, o máximo.
+    ─ Retorno: uma lista com todas as possibilidades encontradas.
     """
-    rangeIsValid2(intervalo1, intervalo2)
+    range_is_valid_2(intervalo1, intervalo2)
     # criando a lista que vai conter as possibilidades
     combinacoes = []
     # criando a variavel que cointa a quantidade de combinacoes
@@ -80,17 +84,21 @@ def Find2CombSomMul(intervalo1: list, intervalo2: list) -> list:
             # adicionando a combinacao encontrada na lista
             combinacoes.append([numero_intervalo1, numero_intervalo2])
     # Contando para o usuário todas as possibilidades encontradas
-    print('Foram encontradas %i possibilidades possíveis.' % cont)
+    print(f'Foram encontradas {cont} possibilidades possíveis.')
     # returnando todas as possibiliades possíveis
     return combinacoes
 
 
-def Find2CombSubDiv(intervalo1: list, intervalo2: list) -> list:
+def find_2_comb_sub_div(intervalo1: list, intervalo2: list) -> list:
     """
-    Funcao que encontra Todas possibilidades das combinacoes de
-    números entre dois intervalos para o treino de subtracao e divisao
+    Func. q acha todas as comb. de 2 nums em dois intervalos para sub e div.
+
+    Como usar:
+    ─ Argumentos: duas listas com no primerio índice o número mínimo
+      do intervalo e no segundo, e ultimo, o máximo.
+    ─ Retorno: uma lista com todas as possibilidades encontradas.
     """
-    rangeIsValid2(intervalo1, intervalo2)
+    range_is_valid_2(intervalo1, intervalo2)
     # criando a lista que vai conter as possibilidades
     combinacoes = []
     # criando a variavel que cointa a quantidade de combinacoes
@@ -106,34 +114,29 @@ def Find2CombSubDiv(intervalo1: list, intervalo2: list) -> list:
             combinacoes.append([numero_intervalo1, numero_intervalo2])
             combinacoes.append([numero_intervalo2, numero_intervalo1])
     # Contando para o usuário todas as possibilidades encontradas
-    print('Foram encontradas %i possibilidades possíveis.' % cont)
+    print(f'Foram encontradas {cont} possibilidades possíveis.')
     # returnando todas as possibiliades possíveis
     return combinacoes
 
 
-def rangesIntersect(intervalo1: list, intervalo2: list) -> bool:
-    """
-    Funcao que verifica se os intervalos se intersectao.
-    """
+def ranges_intersect(intervalo1: list, intervalo2: list) -> bool:
+    """Func. q verifica se os intervalos se intersectam."""
     if intervalo1[0] <= intervalo2[0] and intervalo1[1] >= intervalo2[0]:
         return True
     if intervalo2[0] <= intervalo1[0] and intervalo2[1] >= intervalo1[0]:
         return True
+    return False
 
 
-def rangeIsNotEmpyt(intervalo: list) -> bool:
-    """
-    Funcao que verifica se o intervalo esta vazio.
-    """
+def range_is_not_empty(intervalo: list) -> bool:
+    """Func. q verifica se o intervalo esta vazio."""
     if intervalo[0] >= intervalo[1]:
         return False
     return True
 
 
-def rangeIsValid2(intervalo1: list, intervalo2: list) -> bool:
-    """
-    Verifica se os ranges das combinacoes de dois intervalos estao errados.
-    """
+def range_is_valid_2(intervalo1: list, intervalo2: list) -> bool:
+    """Func. q verif. se os ranges das comb. de 2 intervalos estao errados."""
     # Verificamos se os valores das entradas sao do tipo certo
     if not isinstance(intervalo1, (list, tuple)) or not isinstance(
         intervalo2, (list, tuple)
@@ -144,16 +147,15 @@ def rangeIsValid2(intervalo1: list, intervalo2: list) -> bool:
     if len(intervalo1) == len(intervalo2) == 2:
         #
         # Se os intervalos nao estao vazios
-        if rangeIsNotEmpyt(intervalo1) and rangeIsNotEmpyt(intervalo2):
+        if range_is_not_empty(intervalo1) and range_is_not_empty(intervalo2):
             #
             # e se eles nao estao dentro um do outro
-            if not rangesIntersect(intervalo1, intervalo2):
+            if not ranges_intersect(intervalo1, intervalo2):
                 return True
-            else:
-                raise ValueError(
-                    'Os intervalos, ('
-                    f'{intervalo1}-{intervalo2}), se interssectam.'
-                )
+            raise ValueError(
+                'Os intervalos, ('
+                + f'{intervalo1}-{intervalo2}), se interssectam.'
+            )
         raise ValueError(
             'Os intervalos tem que ter o menor valor primeiro'
             + ' e o maior depois [menor, maior]'
@@ -164,10 +166,8 @@ def rangeIsValid2(intervalo1: list, intervalo2: list) -> bool:
     )
 
 
-def rangeIsValid(intervalo):
-    """
-    Verifica se os ranges das combinacoes de um intervalo estao errados.
-    """
+def range_is_valid(intervalo):
+    """Func. q verif. se os ranges das comb. de um intervalo estao errados."""
     # Verificamos se o valores da entrada eh do tipo certo
     if not isinstance(intervalo, (list, tuple)):
         raise TypeError('O intervalo so pode ser listas ou tuplas')
@@ -176,7 +176,7 @@ def rangeIsValid(intervalo):
     if len(intervalo) == 2:
         #
         # E se nao eh um intervalo vazio
-        if rangeIsNotEmpyt(intervalo):
+        if range_is_not_empty(intervalo):
             return True
         raise ValueError(
             'O intervalo tem que ter o menor valor primeiro'

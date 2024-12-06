@@ -2,4 +2,5 @@ customtkinter
 CTkTable
 gTTS
 requests
+loguru
 pyinstaller

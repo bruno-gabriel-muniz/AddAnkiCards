@@ -4,9 +4,9 @@ from unittest.mock import MagicMock
 import pytest
 import requests
 
-from AddAnkiCards.MathTraining.AddCardsMath import MainAddCardsMath
+from add_anki_cards.MathTraining.AddCardsMath import MainAddCardsMath
 
-casosDeTest = {
+casos_de_test = {
     'caso1Simple': [
         '''<h2>Treinamento_de_sub_entre_1-9_id_1</h2>
 <p>_8 - _3 = {{c1::_5__}}|----------|_9 - _2 = {{c2::_7__}}<br>
@@ -35,15 +35,19 @@ _5 - _5 = {{c9::_0__}}|----------|
 }
 
 
-def MockaDb() -> MagicMock:
-    global casosDeTest
-    MockDb = MagicMock()
-    MockDb.cursor().execute().fetchall.return_value = [
-        casosDeTest['caso1Simple'],  casosDeTest['caso2Simple']]
-    return MockDb
+def mock_db() -> MagicMock:
+    global casos_de_test
+    mock_db = MagicMock()
+    mock_db.cursor().execute().fetchall.side_effect = [
+        [
+            casos_de_test['caso1Simple'],  casos_de_test['caso2Simple']
+        ],
+        [[4]],
+    ]
+    return mock_db
 
 
-def deletaCardsTestById(idCardsTeste: int):
+def delete_cards_test_by_id(id_cards_teste: list[int]):
     """
     Funcao que deleta os cards feitos nos testes atraves do Id
 
@@ -51,7 +55,7 @@ def deletaCardsTestById(idCardsTeste: int):
     """
     requisisao = {
         'action': 'deleteNotes',
-        'params': {'notes': idCardsTeste},
+        'params': {'notes': id_cards_teste},
         'version': 6,
     }
     requisisao = json.dumps(requisisao)
@@ -59,12 +63,12 @@ def deletaCardsTestById(idCardsTeste: int):
 
 
 @pytest.mark.Anki
-def test_SimpleAddCards():
+def test_simple_add_cards():
     '''
     Funcao que testa a integracao entre o Anki-connect e o programa
     '''
-    InitTest = MainAddCardsMath.AddCardsMath(1, 2, DbConnect=MockaDb())
-    resultList = InitTest.addCards()
-    assert resultList[0][0]['error'] == resultList[1][0]['error'] is None
-    deletaCardsTestById([resultList[0][0]['result'],
-                        resultList[1][0]['result']])
+    init_test = MainAddCardsMath.AddCardsMath(1, 2, db=mock_db())
+    result_list = init_test.add_cards()
+    assert result_list[0][0]['error'] == result_list[1][0]['error'] is None
+    delete_cards_test_by_id([result_list[0][0]['result'],
+                            result_list[1][0]['result']])

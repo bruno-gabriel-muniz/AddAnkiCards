@@ -5,8 +5,8 @@ from unittest.mock import MagicMock
 import pytest
 import requests
 
-from AddAnkiCards.logginMain import get_logger
-from AddAnkiCards.PraticingEnglish.AddCardsEnglish import MainAddCardsEnglish
+from add_anki_cards.logging_main import get_logger
+from add_anki_cards.PraticingEnglish.AddCardsEnglish import MainAddCardsEnglish
 
 logger = get_logger()
 
@@ -33,33 +33,29 @@ exemplos = {
 }
 
 
-def mockGeneralDB():
+def mock_db():
     """
     Funcao que faz os mocks do Db de todos os testes unitarios
     """
     global exemplos
-    mockGeneralDB = MagicMock()
-    mockGeneralDB.cursor().execute(
-        'SELECT FraseId, FraseOrig, FraseTrad, TagLingua FROM '
-        + 'FrasesNaoUsadas ORDER BY FraseId ASC LIMIT 3'
-    ).fetchall.return_value = [
+    mock_db = MagicMock()
+    mock_db.cursor().execute().fetchall.return_value = [
         exemplos['exemplo1'],
         exemplos['exemplo2'],
         exemplos['exemplo3'],
     ]
-    mockGeneralDB.cursor.execute.return_value = None
-    return mockGeneralDB
+    return mock_db
 
 
-def deletaCardsTestById(idCardsTeste):
+def delete_cards_test_by_id(id_cards_teste: list[int]):
     """
     Funcao que deleta os cards feitos nos testes atraves do Id
 
-    idCardsTeste: lista com os numeros dos Id's
+    id_cards_teste: lista com os numeros dos Id's
     """
     requisisao = {
         'action': 'deleteNotes',
-        'params': {'notes': idCardsTeste},
+        'params': {'notes': id_cards_teste},
         'version': 6,
     }
     requisisao = json.dumps(requisisao)
@@ -68,28 +64,28 @@ def deletaCardsTestById(idCardsTeste):
 
 @pytest.mark.NotQuick
 @pytest.mark.Anki
-def test_simple_AddCloze_Integrate_Anki_Connect(caplog):
+def test_simple_add_cloze_integrate_anki_connect(caplog):
     """
     Funcao que testa a conexao com o programa e a api do Anki-Connect
     """
     caplog.set_level(logging.DEBUG)
-    test = MainAddCardsEnglish.AddCardsEnglish(3, Db=mockGeneralDB())
-    resultTest = test.addCards()
-    resultTestError = [
-        resultTest[0]['error'],
-        resultTest[1]['error'],
-        resultTest[2]['error'],
+    test = MainAddCardsEnglish.AddCardsEnglish(3, db=mock_db())
+    result_test = test.add_cards()
+    result_test_error = [
+        result_test[0]['error'],
+        result_test[1]['error'],
+        result_test[2]['error'],
     ]
-    resultTestId = [
-        resultTest[0]['result'],
-        resultTest[1]['result'],
-        resultTest[2]['result'],
+    result_test_id = [
+        result_test[0]['result'],
+        result_test[1]['result'],
+        result_test[2]['result'],
     ]
-    assert resultTestError == [None, None, None]
-    deletaCardsTestById(resultTestId)
+    assert result_test_error == [None, None, None]
+    delete_cards_test_by_id(result_test_id)
 
 
-def test_format_Cards_AddCloze(caplog):
+def test_format_cards_add_cloze(caplog):
     """
     Funcao que testa a formatacao dos cartoes
     """
@@ -100,13 +96,13 @@ def test_format_Cards_AddCloze(caplog):
     caplog.set_level(logging.DEBUG)
     #
     # rodando o teste
-    test = MainAddCardsEnglish.AddCardsEnglish(3, Db=mockGeneralDB())
+    test = MainAddCardsEnglish.AddCardsEnglish(3, db=mock_db())
     results = []
-    for fraseTest in range(3):
-        results.append(test.formatTextCardCloze(fraseTest))
+    for frase_test in range(3):
+        results.append(test.format_text_card_cloze(frase_test))
     #
     # verificando a formatacao
-    formatEspec = [
+    format_espec = [
         f"""id: {exemplos['exemplo1'][0]}<br>
 {{{{c2::{exemplos['exemplo1'][1]}}}}} -> {{{{c2::[sound:AddCardsAudio{exemplos[
             'exemplo1'][0]:0>6}.mp3]}}}}
@@ -129,5 +125,5 @@ def test_format_Cards_AddCloze(caplog):
     </ul>
 """,
     ]
-    print(*results, *formatEspec)
-    assert results == formatEspec
+    print(*results, *format_espec)
+    assert results == format_espec

@@ -1,16 +1,27 @@
+connect:
+	source ./venv-dev/bin/activate
+run:
+	python main.py
+install-dev:
+	python -m venv venv-dev && source venv-dev/bin/activate && pip install -r requiriments-dev.txt
+install:
+	python -m venv venv && source venv/bin/activate && pip install -r requiriments.txt
 format:
-	@isort ./AddAnkiCards/
+	@isort ./add_anki_cards/
 	@isort ./tests/
-	@blue ./AddAnkiCards/
+	@isort main.py
+	@blue ./add_anki_cards/
 	@blue ./tests/
+	@blue main.py
 lint:
-	@blue ./AddAnkiCards/ --check
-	@blue ./tests/ --check
+	prospector ./add_anki_cards/ --with-tool pydocstyle
+lint-test:
+	prospector ./tests/ --with-tool pydocstyle
 testQuick:
 	@pytest -v -s -m "not NotQuick"
 
 testLessAnki:
 	@pytest -v -s -m "not Anki"
 
-testAll:
+test:
 	@pytest -v -s
