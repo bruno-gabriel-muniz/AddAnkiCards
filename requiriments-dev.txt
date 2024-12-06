@@ -2,6 +2,7 @@
 blue
 isort
 pytest
+pytest-cov
 ipdb
 Prospector
 pip-autoremove

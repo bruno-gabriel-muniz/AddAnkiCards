@@ -155,10 +155,10 @@ class WindowSelectUser:
         # Tentando acionar o icone.
         self.logger.info('Tentando acionar o ícone do app.')
         try:
-            self.icon = 'AddAnkiCards-Logo-v2.ico'
+            self.icon = 'logoApp.ico'
             self.master.iconbitmap(self.icon, True)
         except TclError:
-            self.icon = 'AddAnkiCards-Logo-v2.png'
+            self.icon = 'logoApp.png'
             self.master.iconphoto(True, PhotoImage(self.icon))
 
         # Criando o frame de seleção e criação de usuários.
@@ -451,7 +451,7 @@ class WindowMain:
         db: Connection = DbConnect.db_connect(),
         logger: Logger = get_logger(),
         user: str = 'User_Default',
-        icon: str | PhotoImage = 'AddAnkiCards-Logo-v2.ico',
+        icon: str | PhotoImage = 'logoApp.ico',
     ) -> None:
         """Metodo construtor da classe."""
         self.logger = logger
@@ -1054,12 +1054,15 @@ class WinConfigUser:
                 self.icon,
             )
 
-    def _handle_rename_user_error(self, e: RenameUserError) -> None:
+    def _handle_rename_user_error(
+        self, e: RenameUserError | ValueError
+    ) -> None:
         if str(e) in (
             'Outro usuário já possui este nome.',
             'O novo nome não pode estar em branco.',
             "O nome não pode conter os char's: / ou \\",
             'O novo nome não pode ser igual ao antigo.',
+            'O nome antigo ainda não foi definido no app.',
         ):
             self.logger.info(f'ErroEsperado: {e}')
             self.label_steps_for_apply.configure(text=e)

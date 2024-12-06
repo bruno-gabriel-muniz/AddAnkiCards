@@ -18,10 +18,10 @@ lint:
 lint-test:
 	prospector ./tests/ --with-tool pydocstyle
 testQuick:
-	@pytest -v -s -m "not NotQuick"
+	@pytest -v -s --cov=add_anki_cards.MathTraining --cov=add_anki_cards.PraticingEnglish --cov=add_anki_cards.ManagerUsers -m "not NotQuick"
 
 testLessAnki:
-	@pytest -v -s -m "not Anki"
+	@pytest -v -s --cov=add_anki_cards.MathTraining --cov=add_anki_cards.PraticingEnglish --cov=add_anki_cards.ManagerUsers -m "not Anki"
 
 test:
-	@pytest -v -s
+	@pytest -v -s --cov=add_anki_cards.MathTraining --cov=add_anki_cards.PraticingEnglish --cov=add_anki_cards.ManagerUsers

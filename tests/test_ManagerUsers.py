@@ -20,6 +20,26 @@ def default_users():
     return ["User_Default", ".Test"]
 
 
+def test_init_manager_users():
+    '''
+    Testa a iniciacao da classe manager.
+
+    - Garante que a classe eh iniciado corretamente.
+    - Verifica se o caminho para os dados eh correto.
+    '''
+    with patch('os.path.expanduser', return_value='/mock/home'):
+        test = ManagerUsers()
+        expected = path.join(
+            os.sep, 'mock', 'home', '.AddAnkiCardsData'
+            )
+        assert isinstance(test, ManagerUsers)
+        assert test.data_path == expected
+    test = ManagerUsers('Algum/path/')
+    expected = 'Algum/path/'
+    assert isinstance(test, ManagerUsers)
+    assert test.data_path == expected
+
+
 @patch(
     "os.listdir",
     return_value=["User_Default", ".Test", "User1", ".HiddenUser"]
@@ -33,11 +53,18 @@ def test_new_name_user_is_valid(mock_listdir, manager, default_users):
         - Nome vazio.
         - Nome igual aos padrões ou já existentes.
         - Nome com caracteres inválidos.
+        - Nome antigo não definido no app.
     """
     # Nome válido
     valid, error = manager.new_name_user_is_valid("NewUser")
     assert valid
     assert error is None
+
+    # Antigo nome inexistente
+    valid, error = manager.new_name_user_is_valid('pass', 'NotDefinid')
+    assert not valid
+    assert isinstance(error, ValueError)
+    assert 'O nome antigo ainda não foi definido no app.' in str(error)
 
     # Nome vazio
     valid, error = manager.new_name_user_is_valid("")
@@ -55,11 +82,25 @@ def test_new_name_user_is_valid(mock_listdir, manager, default_users):
             'O novo nome não pode ser igual ao do usuário padrão.',
         )
 
+    # Alterando para o mesmo nome
+    valid, error = manager.new_name_user_is_valid('User1', 'User1')
+    assert not valid
+    assert isinstance(error, ValueError)
+    assert 'O novo nome não pode ser igual ao antigo.' in str(error)
+
     # Nome existente
     valid, error = manager.new_name_user_is_valid("User1")
     assert not valid
     assert isinstance(error, ValueError)
     assert "Outro usuário já possui este nome." in str(error)
+
+    # Nome com carcteres inválidos
+    valid, error = manager.new_name_user_is_valid(
+        'OI/OutraPasta\\eTalvezOutra'
+    )
+    assert not valid
+    assert isinstance(error, ValueError)
+    assert "O nome não pode conter os char's: / ou \\" in str(error)
 
 
 @patch(
@@ -112,6 +153,65 @@ def test_make_user(mock_open, mock_makedirs, manager):
     ):
         with pytest.raises(ValueError, match="Erro ao criar"):
             manager.make_user("InvalidUser")
+
+
+@patch('os.rename')
+@patch("builtins.open", new_callable=mock_open)
+def test_rename_common_user(mock_open, mock_rename, manager):
+    """
+    Testa a renomeação de um usuário comum.
+
+    - Verifica se o nome antigo é corretamente alterado para o novo.
+    - Garante que a validação de nome seja chamada e aceita nomes válidos.
+    - Simula erros ao validar ou renomear, garantindo que sejam levantadas as
+      exceções esperadas.
+    """
+    with patch.object(
+        manager, 'new_name_user_is_valid', return_value=(True, None)
+    ):
+        manager.rename_user('NomeAntigo', 'NomeNovo')
+        mock_rename.assert_called_with(
+            path.join(manager.data_path, 'NomeAntigo'),
+            path.join(manager.data_path, 'NomeNovo')
+        )
+        mock_open.assert_not_called()
+
+    with patch.object(
+        manager, "new_name_user_is_valid",
+        return_value=(False, ValueError("Erro ao criar"))
+    ):
+        with pytest.raises(ValueError, match="Erro ao criar"):
+            manager.rename_user("InvalidUser", 'InvalidUser')
+
+
+@patch('os.rename')
+@patch("builtins.open", new_callable=mock_open)
+def test_rename_default_user(mock_open, mock_rename, manager):
+    """
+    Testa a renomeação de um usuário padrão.
+
+    - Verifica se o nome do usuário padrão pode ser alterado para um novo nome.
+    - Garante que o arquivo de configuração do novo usuário seja criado
+      corretamente.
+    """
+    # Renomeando o User_Default
+    with patch.object(
+        manager, 'new_name_user_is_valid', return_value=(True, None)
+    ):
+        manager.rename_user('User_Default', 'NomeNovo')
+        mock_rename.assert_called_with(
+            path.join(manager.data_path, 'User_Default'),
+            path.join(manager.data_path, 'NomeNovo')
+        )
+        mock_open.assert_called_with(
+            path.join(
+                os.sep,
+                manager.data_path,
+                'NomeNovo',
+                'config.json'
+            ),
+            'w'
+        )
 
 
 @patch("builtins.open", new_callable=mock_open)

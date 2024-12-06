@@ -209,4 +209,7 @@ pyrightconfig.json
 .history
 .ionide
 
+
+**/logoApp*
+
 # End of https://www.toptal.com/developers/gitignore/api/asdf,python,visualstudiocode,database

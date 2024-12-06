@@ -19,35 +19,35 @@ AddAnkiCards is a tool under development that simplifies creating and adding stu
 ### Main / Main
 Interface principal do AddAnkiCards, onde o usuário pode acessar as funcionalidades principais do programa.
 <p>/<p>
-The main interface of AddAnkiCards, where users can access the program's primary functions.
+The main interface of AddAnkiCards, where users can access the program's primary functions.<p>
 
 <img src="https://i.ibb.co/MBbC1Yp/Add-Anki-Cards-Main.png" alt="AddAnkiCards-Main" border="0">
 
 ### English: Make / English: Make
 Permite ao usuário criar cartões em inglês com frases e significados para revisões.
 <p>/<p>
-Allows users to create English cards with phrases and meanings for review.
+Allows users to create English cards with phrases and meanings for review.<p>
 
 <img src="https://i.ibb.co/9gKn8r9/Add-Anki-Cards-Make-Cards-English.png" alt="AddAnkiCards-MakeCardsEnglish" border="0">
 
 ### English: Add / English: Add
 Adiciona os cartões de inglês criados diretamente ao Anki.
 <p>/<p>
-Adds the English cards created directly to Anki.
+Adds the English cards created directly to Anki.<p>
 
 <img src="https://i.ibb.co/CQ7L1rJ/Add-Anki-Cards-Add-English-Cards.png" alt="AddAnkiCards-AddEnglishCards" border="0">
 
 ### Math: Make / Math: Make
 Permite ao usuário criar cartões de operações matemáticas para treino.
 <p>/<p>
-Allows users to create math cards for practice.
+Allows users to create math cards for practice.<p>
 
 <img src="https://i.ibb.co/fNNzV8R/Captura-de-tela-de-2024-08-13-15-33-54.png" alt="Captura-de-tela-de-2024-08-13-15-33-54" border="0">
 
 ### Math: Add / Math: Add
 Adiciona os cartões de matemática criados diretamente ao Anki.
 <p>/<p>
-Adds the math cards created directly to Anki.
+Adds the math cards created directly to Anki.<p>
 
 <img src="https://i.ibb.co/m8kKH71/Captura-de-tela-de-2024-08-13-15-34-17.png" alt="Captura-de-tela-de-2024-08-13-15-34-17" border="0">
 
@@ -58,12 +58,12 @@ Adds the math cards created directly to Anki.
 ### English / English
 A proposta do programa é facilitar o contato diário com a língua inglesa. Após uma leitura de textos em inglês, o programa ajuda a criar revisões diárias, que aumentam a retenção e fluência.
 <p>/<p>
-The program's aim is to make daily contact with the English language easier. After reading English texts, the program helps create daily reviews that enhance retention and fluency.
+The program's aim is to make daily contact with the English language easier. After reading English texts, the program helps create daily reviews that enhance retention and fluency.<p>
 
 ### Math / Math
 A prática de operações matemáticas repetitivas ajuda o cérebro a se adaptar, tornando cálculos mentais mais rápidos e automáticos. O programa utiliza a revisão espaçada do Anki para ajudar na memorização dessas operações, apresentando-as de forma aleatória e personalizada.
 <p>/<p>
-The practice of repetitive mathematical operations helps the brain adapt, making mental calculations faster and more automatic. The program uses spaced repetition from Anki to help memorize these operations, presenting them in a random and personalized way.
+The practice of repetitive mathematical operations helps the brain adapt, making mental calculations faster and more automatic. The program uses spaced repetition from Anki to help memorize these operations, presenting them in a random and personalized way.<p>
 
 ---
 

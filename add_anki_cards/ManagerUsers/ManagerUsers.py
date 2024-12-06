@@ -47,6 +47,12 @@ class ManagerUsers:
         new_name: str,
         old_name: str = 'User_Default',
     ) -> tuple[bool, Exception | None]:
+        self.load_users(have_return=False)
+        if old_name not in self.all_users_list:
+            return (
+                False,
+                ValueError('O nome antigo ainda não foi definido no app.'),
+            )
         if new_name == '' or new_name.isspace():
             return (
                 False,
@@ -71,7 +77,6 @@ class ManagerUsers:
                     "O nome não pode conter os char's: / ou \\",
                 ),
             )
-        self.load_users(have_return=False)
         if new_name in self.all_users_list:
             return (
                 False,
