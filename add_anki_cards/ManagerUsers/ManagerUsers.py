@@ -113,7 +113,7 @@ class ManagerUsers:
             name_new_user (str): Nome do novo usuário.
 
         Raises:
-            UserCreationError: Se o nome já estiver em uso.
+            ValueError: Se o nome já estiver em uso.
         """
         name_is_valid, error = self.new_name_user_is_valid(name_new_user, '')
         if not name_is_valid:

@@ -12,10 +12,8 @@ from CTkTable import CTkTable
 from add_anki_cards.Db import DbConnect, DbSearch
 from add_anki_cards.logging_main import get_logger
 from add_anki_cards.ManagerUsers.ManagerUsers import (
-    CreationUserError,
     ManagerUsers,
     ReadConfig,
-    RenameUserError,
 )
 from add_anki_cards.MathTraining.AddCardsMath import MainAddCardsMath
 from add_anki_cards.MathTraining.MakeCardsMath import MainMakeCards
@@ -98,10 +96,15 @@ class Tooltip:
         )
 
         # Configurando o label da classe
+        data_font = self.data_config['font']
         self.label = ctk.CTkLabel(
             self.tooltip_win,
             text=self.text,
-            font=self.data_config['font'],
+            font=ctk.CTkFont(
+                data_font[0],
+                weight=data_font[1],
+                size=data_font[2]
+            ),
             text_color=self.data_config['color_theme'],
             corner_radius=5,
         )
@@ -147,7 +150,12 @@ class WindowSelectUser:
         self.logger.info('Lendo as Configurações padrões.')
         self.data_config = ReadConfig('User_Default', self.data_path).get()
         self.color_theme = self.data_config['color_theme']
-        self.font = self.data_config['font']
+        data_font = self.data_config['font']
+        self.font = ctk.CTkFont(
+            data_font[0],
+            size=data_font[2],
+            weight=data_font[1]
+        )
         self.theme_dark_or_ligth = self.data_config['theme_dark_or_ligth']
         self.master._set_appearance_mode(self.theme_dark_or_ligth)
         self.master.resizable(0, 0)
@@ -397,7 +405,7 @@ class WindowSelectUser:
             new_name,
         )
         if find_err:
-            self._handle_user_creation_error(CreationUserError(error_msg))
+            self._handle_user_creation_error(error_msg)
             return None
         self.manager_users.make_user(new_name)
         self.logger.info('Atualizando a janela de login.')
@@ -408,7 +416,7 @@ class WindowSelectUser:
         self.logger.info(f'O usuário: {new_name}, foi criado.')
         self.add_user()
 
-    def _handle_user_creation_error(self, e: CreationUserError) -> NoReturn:
+    def _handle_user_creation_error(self, e: ValueError) -> NoReturn:
         """Trata os na criação de usuário já conhecidos e tratados."""
         if str(e) == 'O nome não pode estar em branco.':
             self.logger.info(f'Erro de valor tratado: {e}.')
@@ -475,7 +483,12 @@ class WindowMain:
         # Definindo as configurações de aparencia.
         data_path = path.join(path.expanduser('~'), '.AddAnkiCardsData')
         self.config = ReadConfig(self.user, data_path).get()
-        self.font = self.config['font']
+        data_font = self.config['font']
+        self.font = ctk.CTkFont(
+            data_font[0],
+            weight=data_font[1],
+            size=data_font[2]
+        )
         self.Master._set_appearance_mode(self.config['theme_dark_or_ligth'])
         self.color_theme = self.config['color_theme']
         self.Master.title('Add Anki Cards')
@@ -743,7 +756,12 @@ class WinConfigUser:
         self.master = master
         self.config = config_user
         self.color_theme = self.config['color_theme']
-        self.font = self.config['font']
+        data_font = self.config['font']
+        self.font = ctk.CTkFont(
+            data_font[0],
+            weight=data_font[1],
+            size=data_font[2]
+        )
         self.data_path = path.join(path.expanduser('~'), '.AddAnkiCardsData')
         self.logger.info('Iniciando o a classe de gerenciamento de users.')
         self.manager_user = ManagerUsers(self.data_path)
@@ -1039,7 +1057,7 @@ class WinConfigUser:
             self.should_apply_changes = True
             self.change_username()
             self.hide_user()
-        except (RenameUserError, ValueError) as e:
+        except ValueError as e:
             self._handle_rename_user_error(e)
             return
         except Exception as e:
@@ -1055,7 +1073,7 @@ class WinConfigUser:
             )
 
     def _handle_rename_user_error(
-        self, e: RenameUserError | ValueError
+        self, e: ValueError
     ) -> None:
         if str(e) in (
             'Outro usuário já possui este nome.',
@@ -1584,7 +1602,7 @@ caso você não queira colocar um limite."""
         else:
             return False
         if self.erro_msg != erro_msg:
-            self.logger.warning(f'InputError: {self.erro_msg}')
+            self.logger.info(f'InputError: {self.erro_msg}')
             self.erro_msg = erro_msg
             self.labelPredictedResult.configure(text=self.erro_msg)
         return True
