@@ -6,7 +6,7 @@ from add_anki_cards.logging_main import get_logger
 
 # importando a funcao que pede as informacoes para o usuario.
 # importando a parte do programa que encontra as possibilidades
-from add_anki_cards.MathTraining.MakeCardsMath.FindCombinations import (
+from add_anki_cards.models.Math.MakeCardsMath.FindCombinations import (
     find_2_comb_som_mul,
     find_2_comb_sub_div,
     find_comb_sub_div,
@@ -15,7 +15,7 @@ from add_anki_cards.MathTraining.MakeCardsMath.FindCombinations import (
 
 # importando a parte do programa que formata, o que foi
 # encontrado, para treinar no Anki
-from add_anki_cards.MathTraining.MakeCardsMath.SaveCombinations import (
+from add_anki_cards.models.Math.MakeCardsMath.SaveCombinations import (
     armazene,
     calcula,
     distribua,

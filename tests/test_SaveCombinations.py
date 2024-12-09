@@ -1,8 +1,10 @@
 import random
 
 from add_anki_cards.Db import DbConnect
-from add_anki_cards.MathTraining.MakeCardsMath import (FindCombinations,
-                                                       SaveCombinations)
+from add_anki_cards.models.Math.MakeCardsMath import (
+    FindCombinations,
+    SaveCombinations,
+)
 
 
 def test_distribua_simple():
@@ -102,9 +104,9 @@ def test_distribua_with_max_cards():
 
 
 def test_calcula_1_intervalo():
-    '''
+    """
     Testa a funcao calcula do armazene cards com combinacoes de um intervalo.
-    '''
+    """
     # preparamos o ambiente
     #
     # chamamos a funcao que encontra todas combinacoes
@@ -113,14 +115,16 @@ def test_calcula_1_intervalo():
     # a que distribui, mesmo sem chamar a que embaralha as combinacoes
     # pois isso nao influencia o teste
     result_sum_test_1, num_cards = SaveCombinations.distribua(
-        result_sum_test_1, 9, 'n')
+        result_sum_test_1, 9, 'n'
+    )
     #
     # a mesma coisa para o teste de multiplicacao, devido a um bug no metodo
     # copy (ele esta passando o endereco de memoria da lista ao inves de
     # criar uma nova com os mesmos valores)
     result_mul_test_1 = FindCombinations.find_comb_sum_mul([1, 9])
     result_mul_test_1, num_cards = SaveCombinations.distribua(
-        result_mul_test_1, 9, 'n')
+        result_mul_test_1, 9, 'n'
+    )
     #
     # e enfim chamamos a funcao que esta sendo testada
     SaveCombinations.calcula(result_sum_test_1, 'sum')
@@ -139,10 +143,12 @@ def test_calcula_1_intervalo():
     # Agora fazemos a mesma coisa para a subtracao e divisao.
     result_sub_test_2 = FindCombinations.find_comb_sub_div([1, 9])
     result_sub_test_2, num_cards = SaveCombinations.distribua(
-        result_sub_test_2, 9, 'n')
+        result_sub_test_2, 9, 'n'
+    )
     result_div_test_2 = FindCombinations.find_comb_sub_div([1, 9])
     result_div_test_2, num_cards = SaveCombinations.distribua(
-        result_div_test_2, 9, 'n')
+        result_div_test_2, 9, 'n'
+    )
     SaveCombinations.calcula(result_sub_test_2, 'sub')
     SaveCombinations.calcula(result_div_test_2, 'div')
     for test in range(5):
@@ -150,9 +156,8 @@ def test_calcula_1_intervalo():
         comb_div_test = random.choice(random.choice(result_div_test_2))
         assert comb_sub_test[0] - comb_sub_test[1] == comb_sub_test[2]
         assert (
-            ((comb_div_test[0]*100) // comb_div_test[1])/100 ==
-            comb_div_test[2]
-        )
+            (comb_div_test[0] * 100) // comb_div_test[1]
+        ) / 100 == comb_div_test[2]
     ...
 
 
@@ -183,24 +188,48 @@ def test_armazene_simple():
     cont_id = 0
     for card_test in combinacoes_test_1:
         cont_id += 1
-        list_card_final_test_1.append(SaveCombinations.formata(
-            card_test, operator_auxi_1, 'sum', [1, 9], cont_id, info_product_1
-        ))
+        list_card_final_test_1.append(
+            SaveCombinations.formata(
+                card_test,
+                operator_auxi_1,
+                'sum',
+                [1, 9],
+                cont_id,
+                info_product_1,
+            )
+        )
     cont_id = 0
     for card_test in combinacoes_test_2:
         cont_id += 1
-        list_card_final_test_2.append(SaveCombinations.formata(
-            card_test, operator_auxi_2, 'sum', [1, 9], cont_id, info_product_2
-        ))
+        list_card_final_test_2.append(
+            SaveCombinations.formata(
+                card_test,
+                operator_auxi_2,
+                'sum',
+                [1, 9],
+                cont_id,
+                info_product_2,
+            )
+        )
     #
     # Rodamos a funcao que esta sendo testado
     SaveCombinations.armazene(
-        list_card_final_test_1, 'sum', False, [1, 9],
-        num_cards, info_product_1, DbConnect.db_connect('DbTest.db', 'Test')
+        list_card_final_test_1,
+        'sum',
+        False,
+        [1, 9],
+        num_cards,
+        info_product_1,
+        DbConnect.db_connect('DbTest.db', 'Test'),
     )
     SaveCombinations.armazene(
-        list_card_final_test_2, 'sum', False, [1, 9],
-        num_cards, info_product_2, DbConnect.db_connect('DbTest.db', 'Test')
+        list_card_final_test_2,
+        'sum',
+        False,
+        [1, 9],
+        num_cards,
+        info_product_2,
+        DbConnect.db_connect('DbTest.db', 'Test'),
     )
     #
     # Pesquisamos os valores que estao sendo testados no banco de dados de

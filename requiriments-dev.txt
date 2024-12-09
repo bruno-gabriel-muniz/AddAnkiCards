@@ -3,6 +3,7 @@ blue
 isort
 pytest
 pytest-cov
+pytest-benchmark
 ipdb
 Prospector
 pip-autoremove

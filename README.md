@@ -16,12 +16,19 @@ AddAnkiCards is a tool under development that simplifies creating and adding stu
 
 ## Interfaces
 
+
+## Login / Login
+
+<img src="https://i.ibb.co/LJNHMh0/image.png" alt="image" border="0">
+
 ### Main / Main
-Interface principal do AddAnkiCards, onde o usuário pode acessar as funcionalidades principais do programa.
-<p>/<p>
-The main interface of AddAnkiCards, where users can access the program's primary functions.<p>
 
 <img src="https://i.ibb.co/MBbC1Yp/Add-Anki-Cards-Main.png" alt="AddAnkiCards-Main" border="0">
+
+
+## Configurações / Configurações
+
+<img src="https://i.ibb.co/wwymdwS/image.png" alt="image" border="0">
 
 ### English: Make / English: Make
 Permite ao usuário criar cartões em inglês com frases e significados para revisões.

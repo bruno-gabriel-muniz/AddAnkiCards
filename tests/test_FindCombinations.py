@@ -4,7 +4,7 @@ from math import factorial
 import pytest
 
 from add_anki_cards.logging_main import get_logger
-from add_anki_cards.MathTraining.MakeCardsMath import FindCombinations
+from add_anki_cards.models.Math.MakeCardsMath import FindCombinations
 
 logger = get_logger('Test')
 
@@ -83,39 +83,44 @@ def sum_all_comb_sub_div2(menor_inter: tuple, maior_inter: tuple) -> int:
     return tamanho_inter_maior * tamanho_inter_menor * 2
 
 
-def test_find_comb_sum_mul__all_combinations(caplog):
+def test_find_comb_sum_mul__all_combinations(benchmark):
     """
     Funcao que testa se todas as possibilidades foram encontradas.
     Levando em consideracao os calculas da funcao 'sumAllCombinationsSomMul1'.
     """
     print('\nCombinacao 1-9: ', end='')
-    assert (len(FindCombinations.find_comb_sum_mul([1, 9])) ==
-            sum_all_comb_sum_mul1(1, 9))
+
+    assert len(
+        FindCombinations.find_comb_sum_mul([1, 9])
+    ) == sum_all_comb_sum_mul1(1, 9)
     print('Combinacao 10-99: ', end='')
-    assert (len(FindCombinations.find_comb_sum_mul([10, 99])) ==
-            sum_all_comb_sum_mul1(10, 99))
+    assert len(
+        FindCombinations.find_comb_sum_mul([10, 99])
+    ) == sum_all_comb_sum_mul1(10, 99)
     print('Combinacao 100-999: ', end='')
-    assert (len(FindCombinations.find_comb_sum_mul([100, 999])) ==
-            sum_all_comb_sum_mul1(100, 999))
+    testb = benchmark(FindCombinations.find_comb_sum_mul, [100, 999])
+    assert len(testb) == sum_all_comb_sum_mul1(100, 999)
 
 
-def test_find_comb_sub_div__all_combinations(caplog):
+def test_find_comb_sub_div__all_combinations(benchmark):
     """
     Funcao que testa se todas as possibilidades foram encontradas.
     Levando em consideracao os calculas da funcao 'sumAllCombinationsSubDiv1'.
     """
     print('\nCombinacao 1-9: ', end='')
-    assert (len(FindCombinations.find_comb_sub_div([1, 9])) ==
-            sum_all_comb_sub_div1(1, 9))
+    assert len(
+        FindCombinations.find_comb_sub_div([1, 9])
+    ) == sum_all_comb_sub_div1(1, 9)
     print('Combinacao 10-99: ', end='')
-    assert (len(FindCombinations.find_comb_sub_div([10, 99])) ==
-            sum_all_comb_sub_div1(10, 99))
+    assert len(
+        FindCombinations.find_comb_sub_div([10, 99])
+    ) == sum_all_comb_sub_div1(10, 99)
     print('Combinacao 100-999: ', end='')
-    assert (len(FindCombinations.find_comb_sub_div([100, 999])) ==
-            sum_all_comb_sub_div1(100, 999))
+    testb = benchmark(FindCombinations.find_comb_sub_div, [100, 999])
+    assert len(testb) == sum_all_comb_sub_div1(100, 999)
 
 
-def test_find_comb_sum_mul__all_combinations2(caplog):
+def test_find_comb_sum_mul__all_combinations2(benchmark):
     """
     Funcao que testa se todas as possibilidades foram encontradas.
     Levando em consideracao os calculas da funcao 'sumAllCombinationsSomMul2'.
@@ -131,12 +136,13 @@ def test_find_comb_sum_mul__all_combinations2(caplog):
     ) == sum_all_comb_sum_mul2([1, 9], [100, 999])
 
     print('Combinacao (10-99)-(100-999): ', end='')
-    assert len(
-        FindCombinations.find_2_comb_som_mul([10, 99], [100, 999])
-    ) == sum_all_comb_sum_mul2([10, 99], [100, 999])
+    testb = benchmark(
+        FindCombinations.find_2_comb_som_mul,
+        [10, 99], [100, 999])
+    assert len(testb) == sum_all_comb_sum_mul2([10, 99], [100, 999])
 
 
-def test_find_comb_sub_div__all_combinations2(caplog):
+def test_find_comb_sub_div__all_combinations2(benchmark):
     """
     Funcao que testa se todas as possibilidades foram encontradas.
     Levando em consideracao os calculas da funcao 'sumAllCombinationsSubDiv2'.
@@ -152,9 +158,9 @@ def test_find_comb_sub_div__all_combinations2(caplog):
     ) == sum_all_comb_sub_div2([1, 9], [100, 999])
 
     print('Combinacao (10-99)-(100-990): ', end='')
-    assert len(
-        FindCombinations.find_2_comb_sub_div([10, 99], [100, 999])
-    ) == sum_all_comb_sub_div2([10, 99], [100, 999])
+    testb = benchmark(FindCombinations.find_2_comb_sub_div,
+                      [10, 99], [100, 999])
+    assert len(testb) == sum_all_comb_sub_div2([10, 99], [100, 999])
 
 
 #

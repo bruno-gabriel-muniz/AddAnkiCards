@@ -3,7 +3,7 @@ from typing import Any
 
 from add_anki_cards.Db import DbConnect
 from add_anki_cards.logging_main import get_logger
-from add_anki_cards.PraticingEnglish.EnglishSaveCards import (
+from add_anki_cards.models.Lang.LangSaveCards import (
     AddDBSaveCards,
     ReadSaveCards,
 )

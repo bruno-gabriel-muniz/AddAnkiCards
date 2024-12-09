@@ -12,7 +12,7 @@ from add_anki_cards.Db import DbConnect
 logger = logging_main.get_logger()
 
 
-class AddCardsEnglish:
+class AddCardsLang:
     """Classe que adiciona os cartoes nao usados no Anki e atualiza o DB."""
 
     def __init__(
@@ -29,7 +29,7 @@ class AddCardsEnglish:
 
         self.user = user
         self.logger = logger
-        self.logger.info('AddCardsEnglish Iniciado')
+        self.logger.info('AddCardsLang Iniciado')
         self.api_anki_connect = api_anki_connect
         self.db = db
         self.name_deck = name_deck

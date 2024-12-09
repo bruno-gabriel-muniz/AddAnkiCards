@@ -6,7 +6,7 @@ import pytest
 import requests
 
 from add_anki_cards.logging_main import get_logger
-from add_anki_cards.PraticingEnglish.AddCardsEnglish import MainAddCardsEnglish
+from add_anki_cards.models.Lang.AddCardsLang import MainAddCardsLang
 
 logger = get_logger()
 
@@ -69,7 +69,7 @@ def test_simple_add_cloze_integrate_anki_connect(caplog):
     Funcao que testa a conexao com o programa e a api do Anki-Connect
     """
     caplog.set_level(logging.DEBUG)
-    test = MainAddCardsEnglish.AddCardsEnglish(3, db=mock_db())
+    test = MainAddCardsLang.AddCardsLang(3, db=mock_db())
     result_test = test.add_cards()
     result_test_error = [
         result_test[0]['error'],
@@ -96,7 +96,7 @@ def test_format_cards_add_cloze(caplog):
     caplog.set_level(logging.DEBUG)
     #
     # rodando o teste
-    test = MainAddCardsEnglish.AddCardsEnglish(3, db=mock_db())
+    test = MainAddCardsLang.AddCardsLang(3, db=mock_db())
     results = []
     for frase_test in range(3):
         results.append(test.format_text_card_cloze(frase_test))

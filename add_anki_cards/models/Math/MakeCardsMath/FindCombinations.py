@@ -44,12 +44,9 @@ def find_comb_sub_div(intervalo: list) -> list:
     # combinacoes possiveis com eles diretamente. Assim, reduzindo
     # o loop pela metade
     for numero_grande in range(intervalo[0], intervalo[1] + 1):
-        for numero_pequeno in range(numero_grande, intervalo[1] + 1):
-            # Verificando se os numeros sao iguais para nao duplica-los
-            if numero_grande == numero_pequeno:
-                combinacoes.append([numero_pequeno, numero_grande])
-                cont += 1
-                continue
+        combinacoes.append([numero_grande, numero_grande])
+        cont += 1
+        for numero_pequeno in range(numero_grande + 1, intervalo[1] + 1):
             cont += 2
             # adicionando a combinacao encontrada das duas forma possiveis
             combinacoes.append([numero_grande, numero_pequeno])

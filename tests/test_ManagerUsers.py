@@ -4,34 +4,35 @@ from unittest.mock import mock_open, patch
 
 import pytest
 
-from add_anki_cards.ManagerUsers.ManagerUsers import (ManagerUsers, ReadConfig,
-                                                      make_config_default)
+from add_anki_cards.models.ManagerUsers.ManagerUsers import (
+    ManagerUsers,
+    ReadConfig,
+    make_config_default,
+)
 
 
 @pytest.fixture
 def manager():
     """Fixture para inicializar o ManagerUsers com dados de teste."""
-    return ManagerUsers(data_path="/fake/path")
+    return ManagerUsers(data_path='/fake/path')
 
 
 @pytest.fixture
 def default_users():
     """Fixture para usuários padrão."""
-    return ["User_Default", ".Test"]
+    return ['User_Default', '.Test']
 
 
 def test_init_manager_users():
-    '''
+    """
     Testa a iniciacao da classe manager.
 
     - Garante que a classe eh iniciado corretamente.
     - Verifica se o caminho para os dados eh correto.
-    '''
+    """
     with patch('os.path.expanduser', return_value='/mock/home'):
         test = ManagerUsers()
-        expected = path.join(
-            os.sep, 'mock', 'home', '.AddAnkiCardsData'
-            )
+        expected = path.join(os.sep, 'mock', 'home', '.AddAnkiCardsData')
         assert isinstance(test, ManagerUsers)
         assert test.data_path == expected
     test = ManagerUsers('Algum/path/')
@@ -41,8 +42,8 @@ def test_init_manager_users():
 
 
 @patch(
-    "os.listdir",
-    return_value=["User_Default", ".Test", "User1", ".HiddenUser"]
+    'os.listdir',
+    return_value=['User_Default', '.Test', 'User1', '.HiddenUser'],
 )
 def test_new_name_user_is_valid(mock_listdir, manager, default_users):
     """
@@ -56,7 +57,7 @@ def test_new_name_user_is_valid(mock_listdir, manager, default_users):
         - Nome antigo não definido no app.
     """
     # Nome válido
-    valid, error = manager.new_name_user_is_valid("NewUser")
+    valid, error = manager.new_name_user_is_valid('NewUser')
     assert valid
     assert error is None
 
@@ -67,10 +68,10 @@ def test_new_name_user_is_valid(mock_listdir, manager, default_users):
     assert 'O nome antigo ainda não foi definido no app.' in str(error)
 
     # Nome vazio
-    valid, error = manager.new_name_user_is_valid("")
+    valid, error = manager.new_name_user_is_valid('')
     assert not valid
     assert isinstance(error, ValueError)
-    assert str(error) == "O novo nome não pode estar em branco."
+    assert str(error) == 'O novo nome não pode estar em branco.'
 
     # Nome igual ao padrão
     for user in default_users:
@@ -89,10 +90,10 @@ def test_new_name_user_is_valid(mock_listdir, manager, default_users):
     assert 'O novo nome não pode ser igual ao antigo.' in str(error)
 
     # Nome existente
-    valid, error = manager.new_name_user_is_valid("User1")
+    valid, error = manager.new_name_user_is_valid('User1')
     assert not valid
     assert isinstance(error, ValueError)
-    assert "Outro usuário já possui este nome." in str(error)
+    assert 'Outro usuário já possui este nome.' in str(error)
 
     # Nome com carcteres inválidos
     valid, error = manager.new_name_user_is_valid(
@@ -104,8 +105,8 @@ def test_new_name_user_is_valid(mock_listdir, manager, default_users):
 
 
 @patch(
-    "os.listdir",
-    return_value=["User_Default", ".Test", "User1", ".HiddenUser"]
+    'os.listdir',
+    return_value=['User_Default', '.Test', 'User1', '.HiddenUser'],
 )
 def test_load_users(mock_listdir, manager):
     """
@@ -117,13 +118,13 @@ def test_load_users(mock_listdir, manager):
         - Usuários ocultos.
     """
     all_users, visible_users, hidden_users = manager.load_users()
-    assert set(all_users) == {"User_Default", ".Test", "User1", ".HiddenUser"}
-    assert set(visible_users) == {"User_Default", "User1"}
-    assert set(hidden_users) == {".Test", ".HiddenUser"}
+    assert set(all_users) == {'User_Default', '.Test', 'User1', '.HiddenUser'}
+    assert set(visible_users) == {'User_Default', 'User1'}
+    assert set(hidden_users) == {'.Test', '.HiddenUser'}
 
 
-@patch("os.makedirs")
-@patch("builtins.open", new_callable=mock_open)
+@patch('os.makedirs')
+@patch('builtins.open', new_callable=mock_open)
 def test_make_user(mock_open, mock_makedirs, manager):
     """
     Testa a criação de novos usuários.
@@ -135,28 +136,28 @@ def test_make_user(mock_open, mock_makedirs, manager):
     """
     # Nome válido
     with patch.object(
-        manager, "new_name_user_is_valid", return_value=(True, None)
+        manager, 'new_name_user_is_valid', return_value=(True, None)
     ):
-        manager.make_user("NewUser")
+        manager.make_user('NewUser')
         mock_makedirs.assert_called_with(
             path.join(os.sep, 'fake', 'path', 'NewUser')
         )
         mock_open.assert_called_with(
-            path.join(os.sep, 'fake', 'path', 'NewUser', 'config.json'),
-            "w"
+            path.join(os.sep, 'fake', 'path', 'NewUser', 'config.json'), 'w'
         )
 
     # Nome inválido
     with patch.object(
-        manager, "new_name_user_is_valid",
-        return_value=(False, ValueError("Erro ao criar"))
+        manager,
+        'new_name_user_is_valid',
+        return_value=(False, ValueError('Erro ao criar')),
     ):
-        with pytest.raises(ValueError, match="Erro ao criar"):
-            manager.make_user("InvalidUser")
+        with pytest.raises(ValueError, match='Erro ao criar'):
+            manager.make_user('InvalidUser')
 
 
 @patch('os.rename')
-@patch("builtins.open", new_callable=mock_open)
+@patch('builtins.open', new_callable=mock_open)
 def test_rename_common_user(mock_open, mock_rename, manager):
     """
     Testa a renomeação de um usuário comum.
@@ -172,20 +173,21 @@ def test_rename_common_user(mock_open, mock_rename, manager):
         manager.rename_user('NomeAntigo', 'NomeNovo')
         mock_rename.assert_called_with(
             path.join(manager.data_path, 'NomeAntigo'),
-            path.join(manager.data_path, 'NomeNovo')
+            path.join(manager.data_path, 'NomeNovo'),
         )
         mock_open.assert_not_called()
 
     with patch.object(
-        manager, "new_name_user_is_valid",
-        return_value=(False, ValueError("Erro ao criar"))
+        manager,
+        'new_name_user_is_valid',
+        return_value=(False, ValueError('Erro ao criar')),
     ):
-        with pytest.raises(ValueError, match="Erro ao criar"):
-            manager.rename_user("InvalidUser", 'InvalidUser')
+        with pytest.raises(ValueError, match='Erro ao criar'):
+            manager.rename_user('InvalidUser', 'InvalidUser')
 
 
 @patch('os.rename')
-@patch("builtins.open", new_callable=mock_open)
+@patch('builtins.open', new_callable=mock_open)
 def test_rename_default_user(mock_open, mock_rename, manager):
     """
     Testa a renomeação de um usuário padrão.
@@ -201,20 +203,15 @@ def test_rename_default_user(mock_open, mock_rename, manager):
         manager.rename_user('User_Default', 'NomeNovo')
         mock_rename.assert_called_with(
             path.join(manager.data_path, 'User_Default'),
-            path.join(manager.data_path, 'NomeNovo')
+            path.join(manager.data_path, 'NomeNovo'),
         )
         mock_open.assert_called_with(
-            path.join(
-                os.sep,
-                manager.data_path,
-                'NomeNovo',
-                'config.json'
-            ),
-            'w'
+            path.join(os.sep, manager.data_path, 'NomeNovo', 'config.json'),
+            'w',
         )
 
 
-@patch("builtins.open", new_callable=mock_open)
+@patch('builtins.open', new_callable=mock_open)
 def test_make_config_default(mock_open):
     """
     Testa a função que cria configurações padrão.
@@ -225,27 +222,26 @@ def test_make_config_default(mock_open):
     # Testando apenas retorno do dicionário
     result = make_config_default(None, None, only_dict=True)
     assert result['font'] == ('Poppins', 'bold', 12)
-    assert result["color_theme"] == "#00AA00"
-    assert result["theme_dark_or_ligth"] == "dark"
+    assert result['color_theme'] == '#00AA00'
+    assert result['theme_dark_or_ligth'] == 'dark'
 
     # Testando escrita do arquivo
     make_config_default(
         path.join(os.sep, 'fake', 'path'),
-        "NewUser",
+        'NewUser',
     )
     mock_open.assert_called_with(
-        path.join(os.sep, 'fake', 'path', 'NewUser', 'config.json'),
-        "w"
+        path.join(os.sep, 'fake', 'path', 'NewUser', 'config.json'), 'w'
     )
 
 
 @patch(
-    "builtins.open",
+    'builtins.open',
     new_callable=mock_open,
     read_data=(
-        '{"font": ["Arial", "bold", 14], "color_theme": "#FF0000",' +
-        ' "theme_dark_or_ligth": "light"}'
-    )
+        '{"font": ["Arial", "bold", 14], "color_theme": "#FF0000",'
+        + ' "theme_dark_or_ligth": "light"}'
+    ),
 )
 def test_read_config(mock_open):
     """
@@ -256,13 +252,13 @@ def test_read_config(mock_open):
         - Configurações de arquivo sejam corretamente interpretadas.
     """
     # Configuração padrão
-    config = ReadConfig("User_Default", path.join(os.sep, 'fake', 'path'))
+    config = ReadConfig('User_Default', path.join(os.sep, 'fake', 'path'))
     assert config.font == ('Poppins', 'bold', 12)
-    assert config.color_theme == "#00AA00"
-    assert config.theme_dark_or_ligth == "dark"
+    assert config.color_theme == '#00AA00'
+    assert config.theme_dark_or_ligth == 'dark'
 
     # Configuração do arquivo
-    config = ReadConfig("TestUser", path.join(os.sep, 'fake', 'path'))
-    assert config.color_theme == "#FF0000"
-    assert config.theme_dark_or_ligth == "light"
-    assert config.font == ["Arial", "bold", 14]
+    config = ReadConfig('TestUser', path.join(os.sep, 'fake', 'path'))
+    assert config.color_theme == '#FF0000'
+    assert config.theme_dark_or_ligth == 'light'
+    assert config.font == ['Arial', 'bold', 14]

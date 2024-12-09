@@ -14,5 +14,7 @@ def get_logger(user: str = 'User_Default') -> Logger:
         level='INFO',
         format='{time} -> {name} -> {file} -> {line} : '
         + '{level} | {message}',
+        rotation='5 MB',
+        retention='1 week',
     )
     return logger

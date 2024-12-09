@@ -7,21 +7,25 @@ install-dev:
 install:
 	python -m venv venv && source venv/bin/activate && pip install -r requiriments.txt
 format:
-	@isort ./add_anki_cards/
-	@isort ./tests/
 	@isort main.py
-	@blue ./add_anki_cards/
-	@blue ./tests/
+	@isort ./add_anki_cards/
 	@blue main.py
+	@blue ./add_anki_cards/
+formatT:
+	@isort ./tests/
+	@blue ./tests/
 lint:
 	prospector ./add_anki_cards/ --with-tool pydocstyle
 lint-test:
 	prospector ./tests/ --with-tool pydocstyle
 testQuick:
-	@pytest -v -s --cov=add_anki_cards.MathTraining --cov=add_anki_cards.PraticingEnglish --cov=add_anki_cards.ManagerUsers -m "not NotQuick"
+	@pytest -v -s --cov=add_anki_cards.models.Math --cov=add_anki_cards.models.Lang --cov=add_anki_cards.models.ManagerUsers --benchmark-columns=mean -m "not NotQuick"
 
 testLessAnki:
-	@pytest -v -s --cov=add_anki_cards.MathTraining --cov=add_anki_cards.PraticingEnglish --cov=add_anki_cards.ManagerUsers -m "not Anki"
+	@pytest -v -s --cov=add_anki_cards.models.Math --cov=add_anki_cards.models.Lang --cov=add_anki_cards.models.ManagerUsers --benchmark-columns=mean -m "not Anki"
 
 test:
-	@pytest -v -s --cov=add_anki_cards.MathTraining --cov=add_anki_cards.PraticingEnglish --cov=add_anki_cards.ManagerUsers
+	@pytest -v -s --cov=add_anki_cards.models.Math --cov=add_anki_cards.models.Lang --cov=add_anki_cards.models.ManagerUsers --benchmark-columns=mean
+
+testb:
+	@pytest -v -s --cov=add_anki_cards.models.Math --cov=add_anki_cards.models.Lang --cov=add_anki_cards.models.ManagerUsers --benchmark-columns=mean --benchmark-only
