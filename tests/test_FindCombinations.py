@@ -1,4 +1,3 @@
-import sys
 from math import factorial
 
 import pytest
@@ -137,8 +136,8 @@ def test_find_comb_sum_mul__all_combinations2(benchmark):
 
     print('Combinacao (10-99)-(100-999): ', end='')
     testb = benchmark(
-        FindCombinations.find_2_comb_som_mul,
-        [10, 99], [100, 999])
+        FindCombinations.find_2_comb_som_mul, [10, 99], [100, 999]
+    )
     assert len(testb) == sum_all_comb_sum_mul2([10, 99], [100, 999])
 
 
@@ -158,8 +157,9 @@ def test_find_comb_sub_div__all_combinations2(benchmark):
     ) == sum_all_comb_sub_div2([1, 9], [100, 999])
 
     print('Combinacao (10-99)-(100-990): ', end='')
-    testb = benchmark(FindCombinations.find_2_comb_sub_div,
-                      [10, 99], [100, 999])
+    testb = benchmark(
+        FindCombinations.find_2_comb_sub_div, [10, 99], [100, 999]
+    )
     assert len(testb) == sum_all_comb_sub_div2([10, 99], [100, 999])
 
 
@@ -168,80 +168,21 @@ def test_find_comb_sub_div__all_combinations2(benchmark):
 #
 
 
-class TreeFindRepetitions(object):
-    """
-    Arvore binaria que procura repeticoes em uma lista
-    """
-
-    def __init__(self, list: list[int]) -> None:
-        # eh nescessario aumentar a recursividade maxima
-        # para o teste nao falhar
-        sys.setrecursionlimit(8500)
-        self.root = NodeFindRepetitions(list[0])
-        self.list = list
-
-    def find_repetitions_list(self) -> tuple[bool, str | None]:
-        """
-        Metodo que procura as repeticoes na lista inserindo cada novo
-        elemento na arvore e retornando erro caso um elemento seja igual a
-        outro. Visto que, eh bem mais eficiente inserir e procurar repeticoes
-        ao mesmo tempo e a arvore binaria torna o programa mais eficiente
-        devido a auto ordenacao.
-        """
-        # Para fazer isso passamos por cada elemento da lista o inserindo na
-        # arvore e recebemos None caso tenha sido inserido com sucesso e nao
-        # tenha dupicatas e false coso um elemento igual tenha sido encontrado
-        # na ordenacao
-        for data in self.list[1:]:
-            if self.root.find_new_node(data) is None:
-                continue
-            return (False, f'O termo {data} se repete nos dados')
-        return True, None
-
-
-class NodeFindRepetitions(object):
-    """
-    Node da arvore que busca duplicatas.
-    Alem disso, ele realiza a insersao nela atraves de recursividade
-    """
-
-    def __init__(self, data: any) -> None:
-        """
-        Cada node tem qualquer dado que possa ser ordenado e dois atributos
-        (self.menor e self.maior) cada um com outro node dessa mesma classe
-        ou None.
-        """
-        self.data = data
-        self.maior = None
-        self.menor = None
-
-    def find_new_node(self, data_new_node) -> None | bool:
-        """
-        Metodo que insere um novo node na arvore de forma ordenada.
-        Alem disso, ele devolve um erro se dois valores forem iguais,
-        assim, possibilitando a insersao e a verificacao ao mesmo tempo
-        o que torna o teste bem mais eficiente.
-        """
-        # verificamos se ele eh maior
-        if data_new_node > self.data:
-            # caso seja
-            # verificamos se o proximo node esta disponivel
-            if self.maior is None:
-                # se estiver adcionamos o dado nele
-                self.maior = NodeFindRepetitions(data_new_node)
-                return None
-            # caso nao esteja chamamos o metodo para o proximo node
-            return self.maior.find_new_node(data_new_node)
-        # Fazemos a mesma coisa, mas, para o node menor
-        elif data_new_node < self.data:
-            if self.menor is None:
-                self.menor = NodeFindRepetitions(data_new_node)
-                return None
-            return self.menor.find_new_node(data_new_node)
-        # e se o valor nao for maior nem menor podemos constatar que ele eh
-        # igual e portanto a lista tem repeticoes
+def not_repeat_data(data: list) -> bool:
+    dnr = {}
+    for comb in data:
+        scomb = str(comb)
+        if scomb not in dnr:
+            dnr[scomb] = True
         else:
-            return False
+            return False, f'O ele. {comb} estah repetido'
+    return True, 'Deu Bom'
+
+
+def test_not_repeat_data():
+    assert not_repeat_data([1, 2, 3]) == (True, 'Deu Bom')
+    assert not_repeat_data([9, 2, 800, 50]) == (True, 'Deu Bom')
+    assert not_repeat_data([2, 7, 11, 2]) == (False, 'O ele. 2 estah repetido')
 
 
 def test_find_comb_sum_mul_not_repeat(caplog):
@@ -250,13 +191,13 @@ def test_find_comb_sum_mul_not_repeat(caplog):
     """
     print('\nCombinacao 1-9: ', end='')
     combinations = FindCombinations.find_comb_sum_mul([1, 9])
-    result = TreeFindRepetitions(combinations).find_repetitions_list()
-    assert result[0] is True, result[1]
+    result = not_repeat_data(combinations)
+    assert result[0], result[1]
 
     print('Combinacao 10-99: ', end='')
     combinations = FindCombinations.find_comb_sum_mul([10, 99])
-    result = TreeFindRepetitions(combinations).find_repetitions_list()
-    assert result[0] is True, result[1]
+    result = not_repeat_data(combinations)
+    assert result[0], result[1]
 
 
 def test_find_comb_sub_div_not_repeat(caplog):
@@ -265,13 +206,13 @@ def test_find_comb_sub_div_not_repeat(caplog):
     """
     print('\nCombinacao 1-9: ', end='')
     combinations = FindCombinations.find_comb_sub_div([1, 9])
-    result = TreeFindRepetitions(combinations).find_repetitions_list()
-    assert result[0] is True, result[1]
+    result = not_repeat_data(combinations)
+    assert result[0], result[1]
 
     print('Combinacao 10-99: ', end='')
     combinations = FindCombinations.find_comb_sub_div([10, 99])
-    result = TreeFindRepetitions(combinations).find_repetitions_list()
-    assert result[0] is True, result[1]
+    result = not_repeat_data(combinations)
+    assert result[0], result[1]
 
 
 @pytest.mark.NotQuick
@@ -281,13 +222,13 @@ def test_find_comb_sum_mul_not_repeat2(caplog):
     """
     print('\nCombinacao (1-9)-(10-99): ', end='')
     combinations = FindCombinations.find_2_comb_som_mul([1, 9], [10, 99])
-    result = TreeFindRepetitions(combinations).find_repetitions_list()
-    assert result[0] is True, result[1]
+    result = not_repeat_data(combinations)
+    assert result[0], result[1]
 
     print('Combinacao (1-9)-(100-999): ', end='')
     combinations = FindCombinations.find_2_comb_som_mul([1, 9], [100, 999])
-    result = TreeFindRepetitions(combinations).find_repetitions_list()
-    assert result[0] is True, result[1]
+    result = not_repeat_data(combinations)
+    assert result[0], result[1]
 
 
 @pytest.mark.NotQuick
@@ -297,13 +238,13 @@ def test_find_comb_sub_div_not_repeat2(caplog):
     """
     print('\nCombinacao (1-9)-(10-99): ', end='')
     combinations = FindCombinations.find_2_comb_sub_div([1, 9], [10, 99])
-    result = TreeFindRepetitions(combinations).find_repetitions_list()
-    assert result[0] is True, result[1]
+    result = not_repeat_data(combinations)
+    assert result[0], result[1]
 
     print('Combinacao (1-9)-(100-999): ', end='')
     combinations = FindCombinations.find_2_comb_sub_div([1, 9], [100, 999])
-    result = TreeFindRepetitions(combinations).find_repetitions_list()
-    assert result[0] is True, result[1]
+    result = not_repeat_data(combinations)
+    assert result[0], result[1]
 
 
 #

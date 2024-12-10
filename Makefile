@@ -19,13 +19,13 @@ lint:
 lint-test:
 	prospector ./tests/ --with-tool pydocstyle
 testQuick:
-	@pytest -v -s --cov=add_anki_cards.models.Math --cov=add_anki_cards.models.Lang --cov=add_anki_cards.models.ManagerUsers --benchmark-columns=mean -m "not NotQuick"
+	@pytest -v -s --cov=add_anki_cards.models --benchmark-columns=mean -m "not NotQuick"
 
 testLessAnki:
-	@pytest -v -s --cov=add_anki_cards.models.Math --cov=add_anki_cards.models.Lang --cov=add_anki_cards.models.ManagerUsers --benchmark-columns=mean -m "not Anki"
+	@pytest -v -s --cov=add_anki_cards.models --benchmark-columns=mean -m "not Anki"
 
 test:
-	@pytest -v -s --cov=add_anki_cards.models.Math --cov=add_anki_cards.models.Lang --cov=add_anki_cards.models.ManagerUsers --benchmark-columns=mean
+	@pytest -v -s --cov=add_anki_cards.models --benchmark-columns=mean
 
 testb:
-	@pytest -v -s --cov=add_anki_cards.models.Math --cov=add_anki_cards.models.Lang --cov=add_anki_cards.models.ManagerUsers --benchmark-columns=mean --benchmark-only
+	@pytest -v -s --cov=add_anki_cards.models --benchmark-columns=mean --benchmark-only
