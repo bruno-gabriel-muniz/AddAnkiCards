@@ -2,10 +2,11 @@ from _tkinter import TclError
 from logging import Logger
 from os import path
 from sqlite3 import Connection
-from tkinter import PhotoImage
+from tkinter import PhotoImage, font
 from typing import NoReturn
 
 import customtkinter as ctk
+from CTkListbox import CTkListbox
 
 from add_anki_cards.Db import DbConnect, DbSearch
 from add_anki_cards.Interface.Lang.InterfaceLang import (
@@ -22,6 +23,9 @@ from add_anki_cards.models.ManagerUsers.ManagerUsers import (
     ManagerUsers,
     ReadConfig,
 )
+
+ctk.set_appearance_mode('system')
+ctk.set_default_color_theme('green')
 
 
 class WindowSelectUser:
@@ -56,8 +60,6 @@ class WindowSelectUser:
         self.font = ctk.CTkFont(
             data_font[0], size=data_font[2], weight=data_font[1]
         )
-        self.theme_dark_or_ligth = self.data_config['theme_dark_or_ligth']
-        self.master._set_appearance_mode(self.theme_dark_or_ligth)
         self.master.resizable(0, 0)
 
         # Tentando acionar o icone.
@@ -387,7 +389,6 @@ class WindowMain:
         self.font = ctk.CTkFont(
             data_font[0], weight=data_font[1], size=data_font[2]
         )
-        self.Master._set_appearance_mode(self.config['theme_dark_or_ligth'])
         self.color_theme = self.config['color_theme']
         self.Master.title('Add Anki Cards')
         #
@@ -670,16 +671,24 @@ class WinConfigUser:
         self.logger.info('Criando as abas de configurações.')
         self.tab_view_config = ctk.CTkTabview(
             self.window,
-            height=75,
+            height=50,
             width=50,
-            fg_color='#000000',
         )
+        self.tab_view_config.grid(
+            row=0, column=0, padx=5, pady=5, sticky='nsew'
+        )
+
         self.list_names_tab_view = []
 
         # Criando a aba de configuração de nome
         self.logger.info('Criando a aba de configuração do nome.')
         self._make_tab_username()
         self.list_names_tab_view.append('Config Name')
+
+        # Criando a aba de configuração de tema
+        self.logger.info('Criando a aba de configurção de aparencia.')
+        self._make_tab_appearance()
+        self.list_names_tab_view.append('Config Appearance')
 
         # Criando o label e o botão apply
         self.logger.info('Criando o label e o btn de apply.')
@@ -699,8 +708,12 @@ class WinConfigUser:
 
     def _make_tab_username(self) -> None:
         """Cria a aba de configuração de nome de usuário."""
-        self.tab_name_user = self.tab_view_config.add('Config Name')
-        self.tab_name_user.configure(height=75, width=50)
+        self.tab_name_user = ctk.CTkFrame(
+            self.tab_view_config.add('Config Name'),
+            width=50,
+            height=50,
+        )
+        self.tab_name_user.pack()
 
         # Entry para o novo nome.
         self.logger.debug('Criando a caixa entrada para o novo nome.')
@@ -726,7 +739,6 @@ class WinConfigUser:
             font=self.font,
             fg_color=self.color_theme,
         )
-        self.tab_name_user.grid_rowconfigure(0, weight=1)
         self.tab_name_user.grid_columnconfigure(1, weight=1)
         self.btn_change_username.grid(
             row=0, column=1, padx=5, pady=5, stick='nsew'
@@ -746,14 +758,129 @@ class WinConfigUser:
         self.tab_name_user.grid_rowconfigure(1, weight=1)
         self.tab_name_user.grid_columnconfigure(0, weight=1)
         self.btn_hidden_user.grid(row=1, column=0, columns=2, stick='nsew')
-        self.window.grid_rowconfigure(0, weight=1)
-        self.window.grid_columnconfigure(0, weight=1)
-        self.tab_view_config.grid(
-            row=0, column=0, padx=5, pady=5, sticky='nsew'
-        )
 
     def _make_tab_appearance(self) -> None:
-        pass
+        """Cria a aba de configuração de aparência."""
+        # Frame principal para a aba de aparência.
+        self.logger.info('Criando a aba de configuração de aparência.')
+        self.tab_appearance = ctk.CTkFrame(
+            self.tab_view_config.add('Config Appearance'),
+            width=250,
+            height=250,
+        )
+        self.tab_appearance.pack()
+
+        # Configuração de layout para o frame.
+        self.tab_appearance.grid_columnconfigure(0, weight=10)
+        self.tab_appearance.grid_rowconfigure((0, 2, 3), weight=10)
+
+        # Dicionário de temas de cores disponíveis.
+        color_themes = {
+            'Red': '#880000',
+            'Green': '#008800',
+            'Blue': '#000088',
+            'Purple': '#880088',
+            'Yellow': '#888800',
+            'Cyan': '#008888',
+            'Orange': '#884400',
+            'Pink': '#880044',
+            'Brown': '#444400',
+            'Gray': '#888888',
+            'Black': '#000000',
+            'White': '#ffffff',
+        }
+
+        # Rótulo e menu suspenso para alterar a cor do tema.
+        self.logger.debug('Criando os componentes para alterar a cor do tema.')
+        self.label_color_theme = ctk.CTkLabel(
+            self.tab_appearance,
+            text='Change color theme to:',
+            font=self.font,
+        )
+        self.label_color_theme.grid(row=0, column=0, padx=3, pady=5)
+
+        self.option_menu_color_theme = ctk.CTkOptionMenu(
+            self.tab_appearance,
+            values=sorted(color_themes.keys()),
+            fg_color=self.color_theme,
+            font=self.font,
+        )
+        self.option_menu_color_theme.grid(row=0, column=1, padx=3, pady=5)
+
+        # Rótulo para configuração de fontes.
+        self.label_fonts = ctk.CTkLabel(
+            self.tab_appearance,
+            text='Config Font',
+            font=self.font,
+        )
+        self.label_fonts.grid(
+            row=1, column=0, columnspan=2, padx=3, pady=5, sticky='nsew'
+        )
+
+        # Frame para busca de fontes.
+        self.logger.debug('Criando a interface de busca de fontes.')
+        self.frame_font_search = ctk.CTkFrame(
+            self.tab_appearance,
+            height=25,
+            width=235,
+        )
+        self.frame_font_search.grid(
+            row=2, column=0, columnspan=2, padx=3, pady=5, sticky='nsew'
+        )
+
+        self.entry_font_search = ctk.CTkEntry(
+            self.frame_font_search,
+            font=self.font,
+            text_color=self.color_theme,
+            placeholder_text_color=self.color_theme,
+            placeholder_text='Search your font:',
+        )
+        self.entry_font_search.pack(side='left', fill='x', expand=True, padx=3)
+
+        self.btn_font_search = ctk.CTkButton(
+            self.frame_font_search,
+            text='🔍︎',
+            font=self.font,
+            fg_color=self.color_theme,
+            width=25,
+        )
+        self.btn_font_search.pack(side='right', padx=3)
+
+        # Lista de fontes disponíveis.
+        self.logger.debug('Criando a lista de fontes disponíveis.')
+        fonts_available = sorted(font.families())
+        self.listbox_fonts = CTkListbox(
+            self.tab_appearance,
+            font=self.font,
+            width=300,
+            border_color=self.color_theme,
+        )
+        self.listbox_fonts.grid(row=3, column=0, columnspan=2, padx=3, pady=5)
+
+        for idx, font_name in enumerate(fonts_available[:20]):
+            self.listbox_fonts.insert(idx, font_name)
+
+        # Switch para alternar entre fontes com e sem negrito.
+        self.switch_bold_font = ctk.CTkSwitch(
+            self.tab_appearance,
+            text='With Bold',
+            onvalue=True,
+            offvalue=False,
+            font=self.font,
+            progress_color=self.color_theme,
+            fg_color='#888888',
+        )
+        self.switch_bold_font.select()
+        self.switch_bold_font.grid(row=4, column=0)
+
+        # Botão para aplicar a mudança de fonte.
+        self.btn_apply_font = ctk.CTkButton(
+            self.tab_appearance,
+            text='Change Font',
+            font=self.font,
+            fg_color=self.color_theme,
+        )
+        self.btn_apply_font.grid(row=4, column=1)
 
     def _make_btn_label_apply(self) -> None:
         """Cria o botão e o label para aplicar as mudanças."""
@@ -765,7 +892,6 @@ class WinConfigUser:
             self.window,
             text=self.txt_steps_for_apply,
             font=self.font,
-            text_color=self.color_theme,
         )
         self.label_steps_for_apply.grid(row=1, column=0, columns=2)
 

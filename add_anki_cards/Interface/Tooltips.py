@@ -25,7 +25,6 @@ class Tooltip:
             data_config: Um dicionário contendo configurações para a tooltip:
                 - `font`: A fonte do texto da tooltip.
                 - `color_theme`: O tema de cores do texto da tooltip.
-                - `theme_dark_or_light`: O modo de tema da janela da tooltip.
             text: O texto a ser exibido na tooltip.
         """
         if logger:
@@ -76,9 +75,6 @@ class Tooltip:
         self.tooltip_win = ctk.CTkToplevel(self.master_widget)
         self.tooltip_win.wm_overrideredirect(True)
         self.tooltip_win.geometry(f'+{x}+{y}')
-        self.tooltip_win._set_appearance_mode(
-            self.data_config['theme_dark_or_ligth']
-        )
 
         # Configurando o label da classe
         data_font = self.data_config['font']

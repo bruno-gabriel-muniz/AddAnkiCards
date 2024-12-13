@@ -1,6 +1,7 @@
 import json
 import os
-from typing import Literal, Union
+from os import path
+from typing import Union
 
 from customtkinter import CTkFont
 
@@ -13,14 +14,52 @@ def make_config_default(
     """Func. q. inicializa as config's padrões."""
     config_default = {
         'font': ('Poppins', 'bold', 12),
-        'color_theme': '#00AA00',
-        'theme_dark_or_ligth': 'dark',
+        'color_theme': '#008800',
     }
     if only_dict:
         return config_default
     path_to_config = os.path.join(data_path, name_user, 'config.json')
     with open(path_to_config, 'w') as config:
         json.dump(config_default, config, indent=4)
+
+
+def change_config(
+    data_path: str,
+    name_user: str,
+    config: dict[str, tuple | str],
+) -> None:
+    """
+    Altera as configurações do usuário.
+    """
+    if name_user in ('User_Default', 'Test', '.Test'):
+        raise ValueError(
+            'Não é possível alterar as configurações' + ' do usuário padrão.'
+        )
+    if not isinstance(config, dict):
+        raise TypeError('O argumento "config" deve ser um dicionário.')
+    if 'font' not in config or 'color_theme' not in config:
+        raise ValueError(
+            'O dicionário de configurações deve conter os campos'
+            + ' "font" e "color_theme".'
+        )
+    if not isinstance(config['font'], tuple):
+        raise TypeError('O valor do campo "font" deve ser uma tupla.')
+    if not (
+        isinstance(config['font'][0], str)
+        and isinstance(config['font'][1], str)
+        and isinstance(config['font'][2], int)
+    ):
+        raise TypeError(
+            'O valor do campo "font" deve ser uma tupla'
+            + ' de 2 strings e 1 inteiro.'
+        )
+    if not isinstance(config['color_theme'], str):
+        raise TypeError('O valor do campo "color_theme" deve ser uma string.')
+    path_to_config = path.join(data_path, name_user, 'config.json')
+    if not path.exists(path_to_config):
+        raise ValueError(f'O usuário ({path_to_config}) não existe.')
+    with open(path_to_config, 'w') as config:
+        json.dump(config, config, indent=4)
 
 
 class ManagerUsers:
@@ -161,9 +200,6 @@ class ReadConfig:
             )
             self.font = config_default['font']
             self.color_theme = config_default['color_theme']
-            self.theme_dark_or_ligth: Literal[
-                'light', 'dark'
-            ] = config_default['theme_dark_or_ligth']
         else:
             path_to_config = os.path.join(
                 data_path,
@@ -174,13 +210,9 @@ class ReadConfig:
                 data_config = json.load(config)
             self.font = data_config['font']
             self.color_theme = data_config['color_theme']
-            self.theme_dark_or_ligth: Literal['light', 'dark'] = data_config[
-                'theme_dark_or_ligth'
-            ]
         self.dict_data = {}
         self.dict_data['font'] = self.font
         self.dict_data['color_theme'] = self.color_theme
-        self.dict_data['theme_dark_or_ligth'] = self.theme_dark_or_ligth
         self.dict_data['user'] = self.user
 
     def get(self) -> dict[str, Union[CTkFont, tuple, str]]:
