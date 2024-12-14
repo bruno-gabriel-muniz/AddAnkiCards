@@ -66,7 +66,7 @@ class Tooltip:
         """Met. q mostra o texto"""
 
         # verificando se a win tá aberta
-        if not (self.tooltip_win is None):
+        if self.tooltip_win is not None:
             return None
         self.logger.debug(f'Mostrando o tooltip: {self.short_text}')
         # Criando ela caso não esteja.

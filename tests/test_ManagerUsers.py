@@ -222,8 +222,7 @@ def test_make_config_default(mock_open):
     # Testando apenas retorno do dicionário
     result = make_config_default(None, None, only_dict=True)
     assert result['font'] == ('Poppins', 'bold', 12)
-    assert result['color_theme'] == '#00AA00'
-    assert result['theme_dark_or_ligth'] == 'dark'
+    assert result['color_theme'] == '#008800'
 
     # Testando escrita do arquivo
     make_config_default(
@@ -239,8 +238,7 @@ def test_make_config_default(mock_open):
     'builtins.open',
     new_callable=mock_open,
     read_data=(
-        '{"font": ["Arial", "bold", 14], "color_theme": "#FF0000",'
-        + ' "theme_dark_or_ligth": "light"}'
+        '{"font": ["Arial", "bold", 14], "color_theme": "#FF0000"}'
     ),
 )
 def test_read_config(mock_open):
@@ -254,11 +252,9 @@ def test_read_config(mock_open):
     # Configuração padrão
     config = ReadConfig('User_Default', path.join(os.sep, 'fake', 'path'))
     assert config.font == ('Poppins', 'bold', 12)
-    assert config.color_theme == '#00AA00'
-    assert config.theme_dark_or_ligth == 'dark'
+    assert config.color_theme == '#008800'
 
     # Configuração do arquivo
     config = ReadConfig('TestUser', path.join(os.sep, 'fake', 'path'))
     assert config.color_theme == '#FF0000'
-    assert config.theme_dark_or_ligth == 'light'
     assert config.font == ['Arial', 'bold', 14]

@@ -6,13 +6,13 @@ from tkinter import PhotoImage, font
 from typing import NoReturn
 
 import customtkinter as ctk
-from CTkListbox import CTkListbox
 
 from add_anki_cards.Db import DbConnect, DbSearch
 from add_anki_cards.Interface.Lang.InterfaceLang import (
     WinAddCardsLang,
     WinMakeEnglish,
 )
+from add_anki_cards.Interface.ListBox import ListBox
 from add_anki_cards.Interface.Math.InterfaceMath import (
     WinAddCardsMath,
     WinMakeMath,
@@ -103,14 +103,14 @@ class WindowSelectUser:
         self.frame_users_expd = False
 
         # Lista com os usuários disponíveis
-        self.option_menu_users = ctk.CTkOptionMenu(
+        self.opt_menu_users = ctk.CTkOptionMenu(
             self.frame_users,
             values=self.users_list,
             fg_color=self.color_theme,
             font=self.font,
             anchor='center',
         )
-        self.option_menu_users.grid(row=0, column=0, padx=5, pady=5)
+        self.opt_menu_users.grid(row=0, column=0, padx=5, pady=5)
 
         # Botão para expandir a criação de usuário.
         self.btn_add_user = ctk.CTkButton(
@@ -180,7 +180,7 @@ class WindowSelectUser:
         """Cria os tooltip da interface."""
         Tooltip(
             self.master,
-            self.option_menu_users,
+            self.opt_menu_users,
             self.data_config,
             'Usuário que fará o login.'
             + '\nHot Key: "Tab".'
@@ -232,16 +232,16 @@ class WindowSelectUser:
 
     def get_next_user(self, event=None) -> NoReturn:
         """Seleciona o próximo usuário da lista de usuários."""
-        options = self.option_menu_users._values
-        next_index = (options.index(self.option_menu_users.get()) + 1) % len(
+        options = self.opt_menu_users._values
+        next_index = (options.index(self.opt_menu_users.get()) + 1) % len(
             options
         )
-        self.option_menu_users.set(options[next_index])
+        self.opt_menu_users.set(options[next_index])
         self.logger.info(
             f'Selecionando o próximo usuário: "{options[next_index]}".'
         )
 
-    def update_option_menu_user(self) -> None:
+    def update_opt_menu_user(self) -> None:
         """Atualiza os nomes de usuários do option menu."""
         self.logger.info('Atualizando a lista de usuários disponíveis.')
         (
@@ -250,27 +250,27 @@ class WindowSelectUser:
             self.hidden_users_list,
         ) = self.manager_users.load_users()
         if self.is_show_all_users_list:
-            self.option_menu_users.configure(values=self.all_users_list)
+            self.opt_menu_users.configure(values=self.all_users_list)
         else:
-            self.option_menu_users.configure(values=self.users_list)
+            self.opt_menu_users.configure(values=self.users_list)
 
     def show_all_users(self, event=None) -> NoReturn:
         """Mostra todos os usuários, incluindo os ocultos."""
-        self.update_option_menu_user()
+        self.update_opt_menu_user()
         if not self.is_show_all_users_list:
             self.logger.info('Mostrando usuários ocultos e normais.')
-            self.option_menu_users.configure(values=self.all_users_list)
+            self.opt_menu_users.configure(values=self.all_users_list)
             self.is_show_all_users_list = True
         else:
             self.logger.info('Mostrando apenas usuários normais.')
-            while self.option_menu_users.get().startswith('.'):
+            while self.opt_menu_users.get().startswith('.'):
                 self.get_next_user()
-            self.option_menu_users.configure(values=self.users_list)
+            self.opt_menu_users.configure(values=self.users_list)
             self.is_show_all_users_list = False
 
     def make_login(self, event=None) -> NoReturn:
         """Realiza o login do usuário selecionado."""
-        user = self.option_menu_users.get()
+        user = self.opt_menu_users.get()
         self.logger.info(f'Fazendo login com: {user}')
         self.master.after(100, self.master.destroy())
         WindowMain(
@@ -311,9 +311,9 @@ class WindowSelectUser:
             return None
         self.manager_users.make_user(new_name)
         self.logger.info('Atualizando a janela de login.')
-        self.update_option_menu_user()
+        self.update_opt_menu_user()
         if self.is_show_all_users_list or not new_name.startswith('.'):
-            self.option_menu_users.set(new_name)
+            self.opt_menu_users.set(new_name)
         self.label_status.configure(text=f'Usuário {new_name} foi criado.')
         self.logger.info(f'O usuário: {new_name}, foi criado.')
         self.add_user()
@@ -775,7 +775,7 @@ class WinConfigUser:
         self.tab_appearance.grid_rowconfigure((0, 2, 3), weight=10)
 
         # Dicionário de temas de cores disponíveis.
-        color_themes = {
+        color_themes: dict[str, str | tuple[str, str]] = {
             'Red': '#880000',
             'Green': '#008800',
             'Blue': '#000088',
@@ -786,9 +786,11 @@ class WinConfigUser:
             'Pink': '#880044',
             'Brown': '#444400',
             'Gray': '#888888',
-            'Black': '#000000',
-            'White': '#ffffff',
+            'Black': '#ffffff',
         }
+        self.keys_sorted_colors: list[str] = sorted(
+            color_themes.keys()
+        )
 
         # Rótulo e menu suspenso para alterar a cor do tema.
         self.logger.debug('Criando os componentes para alterar a cor do tema.')
@@ -799,13 +801,18 @@ class WinConfigUser:
         )
         self.label_color_theme.grid(row=0, column=0, padx=3, pady=5)
 
-        self.option_menu_color_theme = ctk.CTkOptionMenu(
+        self.cb_box_color_theme = ctk.CTkComboBox(
             self.tab_appearance,
-            values=sorted(color_themes.keys()),
+            values=self.keys_sorted_colors,
+            command=None,
+            border_color=self.color_theme,
             fg_color=self.color_theme,
+            dropdown_hover_color=self.color_theme,
             font=self.font,
+            text_color='#ffffff',
+            dropdown_font=self.font,
         )
-        self.option_menu_color_theme.grid(row=0, column=1, padx=3, pady=5)
+        self.cb_box_color_theme.grid(row=0, column=1, padx=3, pady=5)
 
         # Rótulo para configuração de fontes.
         self.label_fonts = ctk.CTkLabel(
@@ -842,14 +849,15 @@ class WinConfigUser:
             text='🔍︎',
             font=self.font,
             fg_color=self.color_theme,
-            width=25,
+            width=30,
+            command=self.search_font,
         )
         self.btn_font_search.pack(side='right', padx=3)
 
         # Lista de fontes disponíveis.
         self.logger.debug('Criando a lista de fontes disponíveis.')
         fonts_available = sorted(font.families())
-        self.listbox_fonts = CTkListbox(
+        self.listbox_fonts = ListBox(
             self.tab_appearance,
             font=self.font,
             width=300,
@@ -874,13 +882,13 @@ class WinConfigUser:
         self.switch_bold_font.grid(row=4, column=0)
 
         # Botão para aplicar a mudança de fonte.
-        self.btn_apply_font = ctk.CTkButton(
+        self.btn_change_font = ctk.CTkButton(
             self.tab_appearance,
             text='Change Font',
             font=self.font,
             fg_color=self.color_theme,
         )
-        self.btn_apply_font.grid(row=4, column=1)
+        self.btn_change_font.grid(row=4, column=1)
 
     def _make_btn_label_apply(self) -> None:
         """Cria o botão e o label para aplicar as mudanças."""
@@ -917,10 +925,20 @@ class WinConfigUser:
 
     def _make_binds(self) -> None:
         """Configura os atalhos de teclado."""
-        self.window.bind('<Return>', self.make_apply)
-        self.window.bind('<Tab>', self.get_next_tab)
+        # Atalhos para a tab de config. apparence
+        self.tab_appearance.bind(
+            '<Tab>',
+            self.get_next_color,
+        )
+
+        # Atalhos para a janela em si.
+        self.window.bind('<Control-Return>', self.make_apply)
 
     def _make_tooltips(self) -> None:
+        """
+        Cria os tooltips para os elementos da interface.
+        """
+        # Tooltips da tab do nome de usuário.
         Tooltip(
             self.window,
             self.entry_alter_name,
@@ -942,6 +960,38 @@ class WinConfigUser:
             'Btn para ocultar o usuário.',
             self.logger,
         )
+
+        # Tooltips da tab de aparência.
+        Tooltip(
+            self.window,
+            self.cb_box_color_theme,
+            self.config,
+            'Escolha a cor para qual trocar.',
+            self.logger,
+        )
+        Tooltip(
+            self.window,
+            self.entry_font_search,
+            self.config,
+            'Barra de pesquisa das fontes disponíveis.',
+            self.logger,
+        )
+        Tooltip(
+            self.window,
+            self.btn_change_font,
+            self.config,
+            'Btn para acionar a alteração de fonte.',
+            self.logger,
+        )
+        Tooltip(
+            self.window,
+            self.switch_bold_font,
+            self.config,
+            ('Off: Fonte sem negrito, ' + 'On: Fonte em negrito'),
+            self.logger,
+        )
+
+        # Tooltips janela em si.
         Tooltip(
             self.window,
             self.btn_apply,
@@ -950,18 +1000,20 @@ class WinConfigUser:
             self.logger,
         )
 
-    def get_next_tab(self, event=None) -> None:
-        """Seleciona a próxima aba de configuração."""
-        try:
-            current_idx = self.list_names_tab_view.index(
-                self.tab_view_config.get()
-            )
-            self.tab_view_config.set(self.list_names_tab_view[current_idx + 1])
-        except IndexError:
-            self.tab_view_config.set(self.list_names_tab_view[0])
-        except Exception as e:
-            raise e
-        return None
+    def get_next_color(self, event=None) -> None:
+        """Seleciona a próxima cor do widget: cb_box_color_theme."""
+        current_idx = self.keys_sorted_colors.index(
+            self.cb_box_color_theme.get()
+        )
+        self.cb_box_color_theme.set(
+            self.keys_sorted_colors[
+                (current_idx + 1) % (len(self.keys_sorted_colors) - 1)
+            ]
+        )
+        return 'break'
+
+    def search_font(self, event=None) -> None:
+        print('Fui Clicado!')
 
     def change_username(self) -> None:
         """Altera o nome de usuário."""

@@ -13,13 +13,16 @@ def find_comb_sum_mul(intervalo: list) -> list:
     cont = 0
     # passando por todas as possibilidades de números do lado
     # esquerdo da operacao
-    for numero_grande in range(intervalo[0], intervalo[1] + 1):
+    begin, end = intervalo
+    for num_big in range(begin, end+1):
         # passando por todas as possibilidades de números restantes
-        for numero_pequeno in range(numero_grande, intervalo[1] + 1):
+        num_lower = num_big
+        while num_lower <= end:
             # adicionando a variável que conta as possibilidades
             cont += 1
             # adicionando a combinacao encontrada na lista
-            combinacoes.append([numero_grande, numero_pequeno])
+            combinacoes.append([num_lower, num_big])
+            num_lower += 1
     # Contando para o usuário todas as possibilidades encontradas
     print(f'Foram encontradas {cont} possibilidades possíveis.')
     # returnando todas as possibiliades possíveis
@@ -43,14 +46,17 @@ def find_comb_sub_div(intervalo: list) -> list:
     # Passando por cada um dos numeros grandes fazendo todas as
     # combinacoes possiveis com eles diretamente. Assim, reduzindo
     # o loop pela metade
-    for numero_grande in range(intervalo[0], intervalo[1] + 1):
-        combinacoes.append([numero_grande, numero_grande])
+    begin, end = intervalo
+    for num_big in range(begin, end+1):
+        combinacoes.append([num_big, num_big])
+        num_lower = num_big+1
         cont += 1
-        for numero_pequeno in range(numero_grande + 1, intervalo[1] + 1):
+        while num_lower <= end:
             cont += 2
             # adicionando a combinacao encontrada das duas forma possiveis
-            combinacoes.append([numero_grande, numero_pequeno])
-            combinacoes.append([numero_pequeno, numero_grande])
+            combinacoes.append([num_big, num_lower])
+            combinacoes.append([num_lower, num_big])
+            num_lower += 1
     # Contando para o usuário todas as possibilidades encontradas
     print(f'Foram encontradas {cont} possibilidades possíveis.')
     # returnando todas as possibiliades possíveis
