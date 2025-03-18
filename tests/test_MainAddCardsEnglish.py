@@ -70,12 +70,14 @@ def test_simple_add_cloze_integrate_anki_connect(caplog):
     """
     caplog.set_level(logging.DEBUG)
     test = MainAddCardsLang.AddCardsLang(3, db=mock_db())
-    result_test = test.add_cards()
+    result_test, audio = test.add_cards()
     result_test_error = [
         result_test[0]['error'],
         result_test[1]['error'],
         result_test[2]['error'],
     ]
+    print(
+        f'\n{audio[0]['error']},\n{audio[1]['error']},\n{audio[2]['error']}\n')
     result_test_id = [
         result_test[0]['result'],
         result_test[1]['result'],

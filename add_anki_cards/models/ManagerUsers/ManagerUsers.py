@@ -58,6 +58,7 @@ def change_config(
     path_to_config = path.join(data_path, name_user, 'config.json')
     if not path.exists(path_to_config):
         raise ValueError(f'O usuário ({path_to_config}) não existe.')
+
     with open(path_to_config, 'w') as config:
         json.dump(config, config, indent=4)
 
@@ -155,7 +156,7 @@ class ManagerUsers:
             ValueError: Se o nome já estiver em uso.
         """
         name_is_valid, error = self.new_name_user_is_valid(name_new_user, '')
-        if not name_is_valid:
+        if name_is_valid:
             raise error
         os.makedirs(os.path.join(self.data_path, name_new_user))
         make_config_default(self.data_path, name_new_user)

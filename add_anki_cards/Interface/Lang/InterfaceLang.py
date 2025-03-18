@@ -150,11 +150,13 @@ class WinAddCardsLang:
         master: ctk.CTk,
         config_user: dict[str, tuple | str],
         info_english: list,
+        user: str = 'User_Default',
         db: Connection | Cursor = DbConnect.db_connect(),
         logger: Logger = get_logger(),
     ) -> None:
         """Metodo construtor da classe."""
         self.logger = logger
+        self.user = user
         #
         # Iniciamos os meta-dados da janela,
         self.db = db
@@ -213,6 +215,7 @@ class WinAddCardsLang:
         self.logger.info('Adicionando os cartoes de Inglês')
         MainAddCardsLang.AddCardsLang(
             int(self.quantCards.get()),
+            user=self.user,
             db=self.db,
             logger=self.logger,
         ).add_cards()

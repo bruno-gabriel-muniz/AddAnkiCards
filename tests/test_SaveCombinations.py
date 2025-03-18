@@ -179,14 +179,8 @@ def test_armazene_simple():
     cursor_test = conexao_de_test.cursor()
     #
     # preparamos o ambiente para este teste
-    operator_auxi_1 = SaveCombinations.calcula(
-        combinacoes_test_1,
-        'sum'
-    )
-    operator_auxi_2 = SaveCombinations.calcula(
-        combinacoes_test_2,
-        'sum'
-    )
+    operator_auxi_1 = SaveCombinations.calcula(combinacoes_test_1, 'sum')
+    operator_auxi_2 = SaveCombinations.calcula(combinacoes_test_2, 'sum')
     list_card_final_test_1 = []
     list_card_final_test_2 = []
     info_product_1 = {}

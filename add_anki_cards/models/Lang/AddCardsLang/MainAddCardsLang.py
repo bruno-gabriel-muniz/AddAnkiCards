@@ -79,7 +79,7 @@ class AddCardsLang:
 """
         )
 
-    def add_cards(self):
+    def add_cards(self) -> list[list]:
         """Metodo que adiciona os cloze cartoes no modo cloze."""
 
         # Para adicionar os cartoes, passamos por cada um,
@@ -89,9 +89,10 @@ class AddCardsLang:
         self.logger.info(f'Adicionando os cartões {self.traducoes_frases}')
         result_card_list = []
         result_audio_list = []
-
+        #
         for idx, traducao_frase in enumerate(self.traducoes_frases):
             self.logger.info(f'Adicionando o cartão {traducao_frase}')
+            #
             self.logger.info('Criando o audio')
             audio = gTTS(traducao_frase[1])
             home_path = path.expanduser('~')
@@ -101,16 +102,18 @@ class AddCardsLang:
                 self.user,
                 'collection.media',
             )
+            audio_path = path.join(
+                colection_media, f'AddCardsAudio{traducao_frase[0]:0>6}.mp3'
+            )
             if not path.exists(colection_media):
                 makedirs(colection_media)
-            path_audio = path.join(
-                colection_media,
-                f'AddCardsAudio{traducao_frase[0]:0>6}.mp3',
-            )
-            audio.save(path_audio)
+            audio.save(audio_path)
+
+            #
             self.logger.info('Formatando o texto')
             campo_text = self.format_text_card_cloze(idx)
             self.logger.info(f'Campo Texto = {campo_text}')
+            #
             self.logger.info('Fazendo a requisicao para o Anki')
             requisisao_card = {
                 'action': 'addNote',
@@ -131,13 +134,12 @@ class AddCardsLang:
             requisisao_audio = {
                 'action': 'storeMediaFile',
                 'params': {
-                    'path': path_audio,
-                    'filename': (
-                        'AddCardsAudio' + f'{traducao_frase[0]:0>6}.mp3'
-                    ),
+                    'filename': f'AddCardsAudio{traducao_frase[0]:0>6}.mp3',
+                    'path': audio_path,
                 },
-                'version': 5,
+                'version': 6,
             }
+            #
             self.logger.info(f'Requisicao = {requisisao_card}')
             requisisao_card = json.dumps(requisisao_card)
             requisisao_audio = json.dumps(requisisao_audio)
@@ -160,19 +162,20 @@ class AddCardsLang:
                 self.logger.error(
                     f"Error API AnkiConnect: {result_card['error']}"
                 )
-                return result_card_list
+                return [result_card_list, result_audio_list]
             if result_audio['error'] is not None:
                 self.logger.error(
-                    f"Error API AnkiConnect:{result_audio['error']}"
+                    f"Error API AnkiConnect: {result_audio['error']}"
                 )
-                return result_audio_list
+                return [result_card_list, result_audio_list]
             self.logger.info(
-                f'Frases com id = {traducao_frase[0]} ' + 'adicionadas no Anki'
+                f'Frases com id = {traducao_frase[0]} adicionadas no Anki'
             )
+        #
         self.logger.info('Atualizando o DB')
         self.update_db()  # E atualizamos o DB
         self.logger.info(f'Resultados = {result_card_list}')
-        return result_card_list
+        return [result_card_list, result_audio_list]
 
     def update_db(self):
         """Metodo que atualiza o banco de dados do programa."""
@@ -192,7 +195,6 @@ class AddCardsLang:
             cursor.execute(
                 'DELETE FROM FrasesNaoUsadas WHERE' + f' FraseId = {frase[0]}'
             )
-
         # salvamos o que foi feito e encerramos a conexao
         self.db.commit()
         cursor.close()

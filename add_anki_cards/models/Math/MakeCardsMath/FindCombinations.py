@@ -14,7 +14,7 @@ def find_comb_sum_mul(intervalo: list) -> list:
     # passando por todas as possibilidades de números do lado
     # esquerdo da operacao
     begin, end = intervalo
-    for num_big in range(begin, end+1):
+    for num_big in range(begin, end + 1):
         # passando por todas as possibilidades de números restantes
         num_lower = num_big
         while num_lower <= end:
@@ -47,9 +47,9 @@ def find_comb_sub_div(intervalo: list) -> list:
     # combinacoes possiveis com eles diretamente. Assim, reduzindo
     # o loop pela metade
     begin, end = intervalo
-    for num_big in range(begin, end+1):
+    for num_big in range(begin, end + 1):
         combinacoes.append([num_big, num_big])
-        num_lower = num_big+1
+        num_lower = num_big + 1
         cont += 1
         while num_lower <= end:
             cont += 2

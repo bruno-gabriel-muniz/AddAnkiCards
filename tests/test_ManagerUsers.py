@@ -136,7 +136,7 @@ def test_make_user(mock_open, mock_makedirs, manager):
     """
     # Nome válido
     with patch.object(
-        manager, 'new_name_user_is_valid', return_value=(True, None)
+        manager, 'new_name_user_is_valid', return_value=(False, None)
     ):
         manager.make_user('NewUser')
         mock_makedirs.assert_called_with(
@@ -150,7 +150,7 @@ def test_make_user(mock_open, mock_makedirs, manager):
     with patch.object(
         manager,
         'new_name_user_is_valid',
-        return_value=(False, ValueError('Erro ao criar')),
+        return_value=(True, ValueError('Erro ao criar')),
     ):
         with pytest.raises(ValueError, match='Erro ao criar'):
             manager.make_user('InvalidUser')
@@ -237,9 +237,7 @@ def test_make_config_default(mock_open):
 @patch(
     'builtins.open',
     new_callable=mock_open,
-    read_data=(
-        '{"font": ["Arial", "bold", 14], "color_theme": "#FF0000"}'
-    ),
+    read_data=('{"font": ["Arial", "bold", 14], "color_theme": "#FF0000"}'),
 )
 def test_read_config(mock_open):
     """

@@ -303,10 +303,10 @@ class WindowSelectUser:
         """Cria um novo usuário."""
         self.logger.info('Tentando adicionar um novo usuário.')
         new_name = self.entry_name_new_user.get()
-        find_err, error_msg = self.manager_users.new_name_user_is_valid(
+        is_valid, error_msg = self.manager_users.new_name_user_is_valid(
             new_name,
         )
-        if find_err:
+        if not is_valid:
             self._handle_user_creation_error(error_msg)
             return None
         self.manager_users.make_user(new_name)
@@ -393,7 +393,7 @@ class WindowMain:
         self.Master.title('Add Anki Cards')
         #
         #
-        self.menu_main = ctk.CTkFrame(self.Master, fg_color='#666666')
+        self.menu_main = ctk.CTkFrame(self.Master, fg_color='#888888')
         self.menu_main.grid_columnconfigure(0, weight=1)
         self.menu_main.grid(
             row=0, column=0, columns=2, padx=0, pady=0, sticky='ew'
@@ -586,6 +586,7 @@ class WindowMain:
             self.Master,
             self.config,
             self.info_english,
+            self.user,
             DbConnect.db_connect(user=self.user),
             self.logger,
         )
@@ -673,6 +674,7 @@ class WinConfigUser:
             self.window,
             height=50,
             width=50,
+            segmented_button_selected_color=self.color_theme,
         )
         self.tab_view_config.grid(
             row=0, column=0, padx=5, pady=5, sticky='nsew'
@@ -783,14 +785,10 @@ class WinConfigUser:
             'Yellow': '#888800',
             'Cyan': '#008888',
             'Orange': '#884400',
-            'Pink': '#880044',
-            'Brown': '#444400',
             'Gray': '#888888',
-            'Black': '#ffffff',
+            'Black': '#000000',
         }
-        self.keys_sorted_colors: list[str] = sorted(
-            color_themes.keys()
-        )
+        self.keys_sorted_colors: list[str] = sorted(color_themes.keys())
 
         # Rótulo e menu suspenso para alterar a cor do tema.
         self.logger.debug('Criando os componentes para alterar a cor do tema.')
@@ -838,8 +836,6 @@ class WinConfigUser:
         self.entry_font_search = ctk.CTkEntry(
             self.frame_font_search,
             font=self.font,
-            text_color=self.color_theme,
-            placeholder_text_color=self.color_theme,
             placeholder_text='Search your font:',
         )
         self.entry_font_search.pack(side='left', fill='x', expand=True, padx=3)
@@ -862,6 +858,7 @@ class WinConfigUser:
             font=self.font,
             width=300,
             border_color=self.color_theme,
+            highlight_color=self.color_theme,
         )
         self.listbox_fonts.grid(row=3, column=0, columnspan=2, padx=3, pady=5)
 

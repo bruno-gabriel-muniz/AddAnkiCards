@@ -2,15 +2,17 @@ from CTkListbox import CTkListbox
 
 
 class ListBox(CTkListbox):
-    '''Classe adapitada para comportar o scroll do mouse.'''
+    """Classe adapitada para comportar o scroll do mouse."""
 
     def __init__(self, parent, **kwargs):
-        '''Iniciação da classe com alterações para o scroll.'''
+        """Iniciação da classe com alterações para o scroll."""
         super().__init__(parent, **kwargs)
 
         # Bind de todos os eventos para a mesma função
-        self.bind_all('<MouseWheel>', self._on_mouse_scroll)  # Windows/macOS
-        self.bind_all('<Button-4>', self._on_mouse_scroll)    # Linux scroll up
+        # Windows/macOS
+        self.bind_all('<MouseWheel>', self._on_mouse_scroll)
+        # Linux scroll up
+        self.bind_all('<Button-4>', self._on_mouse_scroll)
         # Linux scroll down
         self.bind_all('<Button-5>', self._on_mouse_scroll)
 
